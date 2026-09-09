@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shows Sucrédito — Todos los espectáculos, una sola tarjeta</title>
+<meta name="description" content="Los shows y espectáculos con tu Tarjeta Sucrédito. Elegí el tuyo y comprá tu entrada en cuotas sin interés.">
+
+<!-- Open Graph: para que se vea bien al compartir el link por WhatsApp/redes -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Shows Sucrédito — Todos los espectáculos, una sola tarjeta">
+<meta property="og:description" content="Elegí tu show y comprá la entrada en cuotas sin interés con Tarjeta Sucrédito.">
+<meta property="og:image" content="assets/events/mona-tucuman.jpg">
+<meta name="theme-color" content="#14120C">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar" id="topbar">
+  <a class="marca" href="#" aria-label="Sucrédito, inicio">
+    <span class="marca-chevron" aria-hidden="true">
+      <svg viewBox="0 0 34 24" xmlns="http://www.w3.org/2000/svg">
+        <rect width="34" height="24" rx="5" fill="#E4032E"/>
+        <path d="M7 5 L15 12 L7 19" stroke="#FFFDF3" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M17 5 L25 12 L17 19" stroke="#FFFDF3" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="marca-texto">SUCRÉDITO</span>
+  </a>
+  <span class="topbar-linea">shows</span>
+</header>
+
+<main>
+
+  <section class="hero">
+    <h1 class="hero-titulo">Todos los shows.<br>Una sola tarjeta.</h1>
+    <p class="hero-sub">Elegí tu espectáculo, mirá los planes de cuotas y comprá tu entrada donde ya la vendan. Sucrédito es tu forma de pagarla.</p>
+  </section>
+
+  <div class="marquee" id="marquee" aria-hidden="true">
+    <div class="marquee-track" id="marqueeTrack"></div>
+  </div>
+
+  <section class="listado" aria-label="Espectáculos disponibles">
+    <div class="listado-grid" id="listadoGrid">
+      <!-- Las entradas se generan dinámicamente desde js/events.js -->
+    </div>
+  </section>
+
+  <section class="como-funciona">
+    <h2>¿Cómo se compra?</h2>
+    <ol class="pasos">
+      <li><span class="paso-num">1</span> Elegís el show que te interesa acá abajo.</li>
+      <li><span class="paso-num">2</span> Te llevamos a la boletería donde se vende la entrada real.</li>
+      <li><span class="paso-num">3</span> Pagás con tu Tarjeta Sucrédito, en cuotas sin interés.</li>
+    </ol>
+    <p class="como-nota">Sucrédito es un medio de pago. La venta de las entradas la realiza cada boletería oficial; verificá siempre precios, condiciones y disponibilidad en el sitio de compra.</p>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span class="footer-marca">
+    <svg viewBox="0 0 34 24" xmlns="http://www.w3.org/2000/svg" width="22" height="16">
+      <rect width="34" height="24" rx="5" fill="#E4032E"/>
+      <path d="M7 5 L15 12 L7 19" stroke="#14120C" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M17 5 L25 12 L17 19" stroke="#14120C" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    SUCRÉDITO — LA TARJETA DE LOS ESPECTÁCULOS
+  </span>
+</footer>
+
+<div class="debug-panel" id="debugPanel" hidden>
+  <div class="debug-header">
+    <strong>Panel de clics (debug)</strong>
+    <button type="button" id="debugCerrar" aria-label="Cerrar panel">✕</button>
+  </div>
+  <div class="debug-body" id="debugBody"></div>
+  <div class="debug-footer">
+    <button type="button" id="debugLimpiar">Borrar contadores</button>
+  </div>
+</div>
+
+<script src="js/events.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
