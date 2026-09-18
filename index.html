@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#FFEE00">
-<title>Sucrédito · Shows</title>
+<title id="sitePageTitle">Sucrédito · Shows</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -496,6 +496,16 @@ h1,h2,h3{margin:0}
   /* En móvil el video se reproduce dentro de la ventana de detalle. */
 }
 
+
+/* V10: estilos administrables */
+#heroTitle, #showsTitle, #benefitTitle { color: var(--site-hero-title-color, #111); }
+#heroText, #benefitText { color: var(--site-hero-text-color, #333); }
+#benefitTitle { color: var(--site-benefit-title-color, #111); }
+#showsTitle { color: var(--site-shows-title-color, #111); }
+#benefitText { color: var(--site-benefit-text-color, #333); }
+
+
+.section-subtitle{margin:8px 0 0;color:#666;max-width:720px;line-height:1.5}
 </style>
 </head>
 
@@ -507,8 +517,9 @@ h1,h2,h3{margin:0}
       <img src="assets/logo.png" class="logo" alt="Sucrédito">
     </a>
     <nav class="nav">
-      <a href="#shows">Shows</a>
-      <a href="#beneficios">Beneficios</a>
+      <a href="#shows" id="navShows">Shows</a>
+      <a href="#beneficios" id="navBenefits">Beneficios</a>
+      <a href="#contacto" id="navContact">Contacto</a>
     </nav>
   </div>
 </header>
@@ -517,12 +528,12 @@ h1,h2,h3{margin:0}
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-copy">
-      <span class="kicker">Sucrédito presenta</span>
-      <h1>VIVÍ LOS SHOWS QUE QUERÉS.</h1>
-      <p>Encontrá tus artistas favoritos, descubrí próximos shows y disfrutá experiencias con Sucrédito.</p>
+      <span class="kicker" id="heroKicker">Sucrédito presenta</span>
+      <h1 id="heroTitle">VIVÍ LOS SHOWS QUE QUERÉS.</h1>
+      <p id="heroText">Encontrá tus artistas favoritos, descubrí próximos shows y disfrutá experiencias con Sucrédito.</p>
       <div class="search">
         <input id="searchInput" type="search" placeholder="Buscá un show o artista..." aria-label="Buscar shows">
-        <button id="searchBtn" type="button">Buscar</button>
+        <button id="searchBtn" type="button">BUSCAR</button>
       </div>
     </div>
 
@@ -538,16 +549,19 @@ h1,h2,h3{margin:0}
 <section class="section" id="shows">
   <div class="section-head">
     <div>
-      <div class="eyebrow">Elegí tu próximo plan</div>
-      <h2>Shows destacados</h2>
+      <div class="eyebrow" id="showsEyebrow">Elegí tu próximo plan</div>
+      <h2 id="showsTitle">Shows destacados</h2>
+      <p id="showsSubtitle" class="section-subtitle">Descubrí eventos, artistas y experiencias para vivir con Sucrédito.</p>
     </div>
     <div class="result-count" id="resultCount">5 shows</div>
   </div>
 
   <div class="filters" aria-label="Filtros de shows">
-    <button class="filter active" data-filter="all">Todos</button>
-    <button class="filter" data-filter="musica">Música</button>
-    <button class="filter" data-filter="especial">Especiales</button>
+    <button class="filter active" data-filter="all" id="filterAll">Todos</button>
+    <button class="filter" data-filter="musica" id="filterMusic">Música</button>
+    <button class="filter" data-filter="especial" id="filterSpecial">Especiales</button>
+    <button class="filter" data-filter="deporte" id="filterSports">Deportes</button>
+    <button class="filter" data-filter="otros" id="filterOther">Otros</button>
   </div>
 
   <div class="shows-grid" id="showsGrid"></div>
@@ -558,14 +572,23 @@ h1,h2,h3{margin:0}
 <section class="section" id="beneficios">
   <div class="benefits">
     <div>
-      <div class="eyebrow">Con Sucrédito</div>
-      <h2>Más shows.<br>Más momentos.</h2>
-      <p>Descubrí propuestas y beneficios pensados para que disfrutes tus experiencias.</p>
+      <div class="eyebrow" id="benefitEyebrow">Con Sucrédito</div>
+      <h2 id="benefitTitle">Más shows.<br>Más momentos.</h2>
+      <p id="benefitText">Descubrí propuestas y beneficios pensados para que disfrutes tus experiencias.</p>
     </div>
     <div class="benefit-grid">
-      <div class="benefit"><strong>🎟️ Shows</strong><span>Encontrá eventos y propuestas destacadas.</span></div>
-      <div class="benefit"><strong>💛 Beneficios</strong><span>Conocé las opciones disponibles con Sucrédito.</span></div>
-      <div class="benefit"><strong>📲 Fácil</strong><span>Desde tu celu, descubrí tu próximo show.</span></div>
+      <div class="benefit"><strong id="benefit1Title">🎟️ Shows</strong><span id="benefit1Text">Encontrá eventos y propuestas destacadas.</span></div>
+      <div class="benefit"><strong id="benefit2Title">💛 Beneficios</strong><span id="benefit2Text">Conocé las opciones disponibles con Sucrédito.</span></div>
+      <div class="benefit"><strong id="benefit3Title">📲 Fácil</strong><span id="benefit3Text">Desde tu celu, descubrí tu próximo show.</span></div>
+    </div>
+  </div>
+</section>
+<section class="section" id="contacto">
+  <div class="benefits">
+    <div>
+      <div class="eyebrow">Sucrédito</div>
+      <h2>¿Necesitás ayuda?</h2>
+      <p id="contactText">Encontrá información y novedades de nuestros shows y experiencias.</p>
     </div>
   </div>
 </section>
@@ -578,7 +601,7 @@ h1,h2,h3{margin:0}
       <a href="#shows">SHOWS</a>
       <a href="#beneficios">BENEFICIOS</a>
     </div>
-    <small>© Sucrédito · Shows y experiencias</small>
+    <small><span id="footerText">© Sucrédito · Shows y experiencias</span> · <a href="admin/" style="opacity:.35">Administrar</a></small>
   </div>
 </footer>
 
@@ -591,7 +614,7 @@ h1,h2,h3{margin:0}
         <video id="modalVideo" muted playsinline controls preload="metadata"></video>
       </div>
       <div class="modal-info">
-        <span class="kicker">Sucrédito presenta</span>
+        <span class="kicker" id="heroKicker">Sucrédito presenta</span>
         <h2 id="modalTitle"></h2>
         <p id="modalDescription"></p>
         <div class="details">
@@ -661,7 +684,10 @@ function escapeHtml(value=''){
 function renderShows(){
   grid.innerHTML = '';
 
-  shows.forEach((show, index) => {
+  shows
+    .filter(show => show.published !== false)
+    .sort((a,b) => (Number(a.sortOrder)||999) - (Number(b.sortOrder)||999))
+    .forEach((show, index) => {
     const card = document.createElement('article');
     card.className = 'card';
     card.dataset.index = index;
@@ -678,7 +704,7 @@ function renderShows(){
         <span class="card-tag">${escapeHtml(show.categoryLabel || show.category || 'Show')}</span>
       </div>
       <div class="card-body">
-        <div class="card-title">${escapeHtml(show.title)}</div>
+        <div class="card-title" style="color:${escapeHtml(show.titleColor||'#111111')};font-family:${escapeHtml(show.titleFont||'Archivo Black')},Inter,Arial,sans-serif">${escapeHtml(show.emoji ? show.emoji+' ' : "")}${escapeHtml(show.title)}</div>
         <div class="card-meta">${escapeHtml(show.shortMeta || 'Show • Sucrédito')}</div>
         <div class="card-cta">
           <span>Ver detalles</span>
@@ -784,7 +810,9 @@ function openModal(show, card){
   modalImage.src = show.image;
   modalImage.alt = show.title;
 
-  modalTitle.textContent = show.title;
+  modalTitle.textContent = (show.emoji ? show.emoji+' ' : '') + show.title;
+  modalTitle.style.color = show.titleColor || '#111111';
+  modalTitle.style.fontFamily = (show.titleFont || 'Archivo Black') + ',Inter,Arial,sans-serif';
   modalDescription.textContent = show.description || '';
   modalDate.textContent = show.date || 'Próximamente';
   modalCity.textContent = show.city || 'Próximamente';
@@ -852,22 +880,51 @@ if (heroVideo) {
   });
 }
 
-/* Carga de datos externa. */
-fetch('data/shows.json', { cache: 'no-store' })
-  .then(response => {
-    if (!response.ok) throw new Error('No se pudo cargar data/shows.json');
-    return response.json();
-  })
-  .then(data => {
-    shows = Array.isArray(data) ? data : [];
-    renderShows();
-  })
-  .catch(error => {
-    console.error(error);
-    shows = [];
-    renderShows();
-  });
-</script>
+/* V10: carga robusta de datos + modo vista previa. */
+const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
+const SEED_SHOWS = [{"title": "Sin Bandera", "image": "assets/events/Sin_Banderas.jpg", "video": "assets/videos/Sin_Banderas.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Viví el show de Sin Bandera y disfrutá una experiencia especial con Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-1", "featured": true, "published": true, "sortOrder": 1, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "La Mona Jiménez", "image": "assets/events/Mona.jpg", "video": "assets/videos/Mona_Jimenez.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "La Mona Jiménez llega con toda su energía. Descubrí la propuesta de Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-2", "featured": true, "published": true, "sortOrder": 2, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Despedida de La Pulga Rodríguez", "image": "assets/events/Despedida_Pulga.jpg", "video": "assets/videos/Despedida_Pulga.mp4", "category": "especial", "categoryLabel": "Especial", "shortMeta": "Evento especial • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Una despedida para vivirla en grande. Conocé todos los detalles cuando sean publicados.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-3", "featured": false, "published": true, "sortOrder": 3, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Jesse & Joy", "image": "assets/events/Jeese_&_Joy.jpg", "video": "assets/videos/Jesse_&_Joy.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Jesse & Joy en una experiencia para disfrutar con Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-4", "featured": false, "published": true, "sortOrder": 4, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Los Fundamentalistas", "image": "assets/events/Fundamentalistas.jpg", "video": "assets/videos/Fundamentalistas.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "10/10/2026 • Tucumán", "date": "10 de octubre de 2026", "city": "Tucumán", "venue": "Hipódromo de Tucumán", "description": "Los Fundamentalistas del Aire Acondicionado. Consultá la información del show y las opciones disponibles con Sucrédito.", "benefit": "Consultá condiciones y beneficios vigentes de Sucrédito.", "purchaseUrl": "", "id": "show-5", "featured": false, "published": true, "sortOrder": 5, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}];
+const SEED_SITE = {"pageTitle": "Sucrédito · Shows", "navShows": "Shows", "navBenefits": "Beneficios", "navContact": "Contacto", "heroKicker": "Sucrédito presenta", "heroTitle": "VIVÍ LOS SHOWS QUE QUERÉS.", "heroText": "Encontrá tus artistas favoritos, descubrí próximos shows y disfrutá experiencias con Sucrédito.", "searchPlaceholder": "¿Qué show estás buscando?", "searchButton": "BUSCAR", "heroVideo": "assets/videos/Sin_Banderas.mp4", "heroPoster": "assets/events/Sin_Banderas.jpg", "showsEyebrow": "Elegí tu próximo plan", "showsTitle": "Shows destacados", "showsSubtitle": "Descubrí eventos, artistas y experiencias para vivir con Sucrédito.", "allFilter": "Todos", "musicFilter": "Música", "specialFilter": "Especiales", "sportsFilter": "Deportes", "otherFilter": "Otros", "benefitEyebrow": "Con Sucrédito", "benefitTitle": "Más shows. Más momentos.", "benefitText": "Descubrí propuestas y beneficios pensados para que disfrutes tus experiencias.", "benefit1Title": "🎟️ Shows", "benefit1Text": "Encontrá eventos y propuestas destacadas.", "benefit2Title": "💛 Beneficios", "benefit2Text": "Conocé las opciones disponibles con Sucrédito.", "benefit3Title": "📲 Fácil", "benefit3Text": "Desde tu celu, descubrí tu próximo show.", "footerText": "© Sucrédito · Shows y experiencias", "contactText":"Encontrá información y novedades de nuestros shows y experiencias.", "footerInstagram": "", "footerFacebook": "", "footerWeb": "", "heroTitleColor": "#111111", "heroTitleFont": "Archivo Black", "heroTextColor": "#333333", "heroTextFont": "Inter", "showsTitleColor": "#111111", "showsTitleFont": "Archivo Black", "benefitTitleColor": "#111111", "benefitTitleFont": "Archivo Black", "benefitTextColor": "#333333", "benefitTextFont": "Inter", "accentColor": "#FFEE00", "backgroundColor": "#FFFDF6"};
+
+function readDraft(key, fallback){
+  try { const raw=localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch(e){ return fallback; }
+}
+function fetchJson(path, fallback){
+  return fetch(path+'?ts='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(new Error(path))).catch(()=>fallback);
+}
+
+const showDataPromise = PREVIEW && localStorage.getItem('sucredito_shows_admin_v10')
+  ? Promise.resolve(readDraft('sucredito_shows_admin_v10',SEED_SHOWS))
+  : fetchJson('data/shows.json',SEED_SHOWS);
+
+showDataPromise.then(data=>{
+  shows = Array.isArray(data) ? data : SEED_SHOWS;
+  renderShows();
+});
+
+const siteDataPromise = PREVIEW && localStorage.getItem('sucredito_site_draft_v10')
+  ? Promise.resolve(readDraft('sucredito_site_draft_v10',SEED_SITE))
+  : fetchJson('data/site.json',SEED_SITE);
+
+siteDataPromise.then(site=>{
+  const set=(id,key)=>{const el=document.getElementById(id); if(el && site[key]!==undefined) el.textContent=site[key];};
+  const attrs=(id,key,attr)=>{const el=document.getElementById(id); if(el && site[key]!==undefined) el.setAttribute(attr,site[key]);};
+  set('sitePageTitle','pageTitle'); document.title=site.pageTitle||document.title;
+  ['navShows','navBenefits','navContact','heroKicker','heroTitle','heroText','showsEyebrow','showsTitle','showsSubtitle','filterAll','filterMusic','filterSpecial','filterSports','filterOther','benefitEyebrow','benefitTitle','benefitText','benefit1Title','benefit1Text','benefit2Title','benefit2Text','benefit3Title','benefit3Text','footerText','contactText'].forEach(id=>set(id,id));
+  attrs('searchInput','searchPlaceholder','placeholder');
+  const sb=document.getElementById('searchBtn'); if(sb && site.searchButton!==undefined) sb.textContent=site.searchButton;
+  const hv=document.getElementById('heroVideo'); if(hv && site.heroVideo){hv.src=site.heroVideo; if(site.heroPoster) hv.poster=site.heroPoster; hv.load();}
+  const root=document.documentElement;
+  root.style.setProperty('--site-hero-title-color',site.heroTitleColor||'#111111');
+  root.style.setProperty('--site-hero-text-color',site.heroTextColor||'#333333');
+  root.style.setProperty('--site-benefit-title-color',site.benefitTitleColor||'#111111');
+  root.style.setProperty('--site-shows-title-color',site.showsTitleColor||'#111111');
+  root.style.setProperty('--site-benefit-text-color',site.benefitTextColor||'#333333');
+  const fontMap=[['heroTitle','heroTitleFont'],['heroText','heroTextFont'],['showsTitle','showsTitleFont'],['benefitTitle','benefitTitleFont'],['benefitText','benefitTextFont']];
+  fontMap.forEach(([id,key])=>{const el=document.getElementById(id); if(el&&site[key]) el.style.fontFamily=site[key]+',Inter,Arial,sans-serif';});
+  if(site.backgroundColor) document.body.style.background=site.backgroundColor;
+  if(site.accentColor) document.documentElement.style.setProperty('--yellow',site.accentColor);
+});
+
 
 <!-- Cloudflare Web Analytics: pegá acá el script de tu propiedad, si querés medir esta página -->
 </body>
