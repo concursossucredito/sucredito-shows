@@ -498,8 +498,11 @@ h1,h2,h3{margin:0}
 
 
 /* V10: estilos administrables */
-#heroTitle, #showsTitle, #benefitTitle { color: var(--site-hero-title-color, #111); }
-#heroText, #benefitText { color: var(--site-hero-text-color, #333); }
+#heroTitle { color: var(--site-hero-title-color, #ffffff); }
+#showsTitle { color: var(--site-shows-title-color, #111111); }
+#benefitTitle { color: var(--site-benefit-title-color, #111111); }
+#heroText { color: var(--site-hero-text-color, #d6d6d6); }
+#benefitText { color: var(--site-benefit-text-color, #333333); }
 #benefitTitle { color: var(--site-benefit-title-color, #111); }
 #showsTitle { color: var(--site-shows-title-color, #111); }
 #benefitText { color: var(--site-benefit-text-color, #333); }
@@ -614,7 +617,7 @@ h1,h2,h3{margin:0}
         <video id="modalVideo" muted playsinline controls preload="metadata"></video>
       </div>
       <div class="modal-info">
-        <span class="kicker" id="heroKicker">Sucrédito presenta</span>
+        <span class="kicker" id="modalKicker">Sucrédito presenta</span>
         <h2 id="modalTitle"></h2>
         <p id="modalDescription"></p>
         <div class="details">
@@ -883,7 +886,7 @@ if (heroVideo) {
 /* V10: carga robusta de datos + modo vista previa. */
 const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
 const SEED_SHOWS = [{"title": "Sin Bandera", "image": "assets/events/Sin_Banderas.jpg", "video": "assets/videos/Sin_Banderas.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Viví el show de Sin Bandera y disfrutá una experiencia especial con Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-1", "featured": true, "published": true, "sortOrder": 1, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "La Mona Jiménez", "image": "assets/events/Mona.jpg", "video": "assets/videos/Mona_Jimenez.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "La Mona Jiménez llega con toda su energía. Descubrí la propuesta de Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-2", "featured": true, "published": true, "sortOrder": 2, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Despedida de La Pulga Rodríguez", "image": "assets/events/Despedida_Pulga.jpg", "video": "assets/videos/Despedida_Pulga.mp4", "category": "especial", "categoryLabel": "Especial", "shortMeta": "Evento especial • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Una despedida para vivirla en grande. Conocé todos los detalles cuando sean publicados.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-3", "featured": false, "published": true, "sortOrder": 3, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Jesse & Joy", "image": "assets/events/Jeese_&_Joy.jpg", "video": "assets/videos/Jesse_&_Joy.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Jesse & Joy en una experiencia para disfrutar con Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-4", "featured": false, "published": true, "sortOrder": 4, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Los Fundamentalistas", "image": "assets/events/Fundamentalistas.jpg", "video": "assets/videos/Fundamentalistas.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "10/10/2026 • Tucumán", "date": "10 de octubre de 2026", "city": "Tucumán", "venue": "Hipódromo de Tucumán", "description": "Los Fundamentalistas del Aire Acondicionado. Consultá la información del show y las opciones disponibles con Sucrédito.", "benefit": "Consultá condiciones y beneficios vigentes de Sucrédito.", "purchaseUrl": "", "id": "show-5", "featured": false, "published": true, "sortOrder": 5, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}];
-const SEED_SITE = {"pageTitle": "Sucrédito · Shows", "navShows": "Shows", "navBenefits": "Beneficios", "navContact": "Contacto", "heroKicker": "Sucrédito presenta", "heroTitle": "VIVÍ LOS SHOWS QUE QUERÉS.", "heroText": "Encontrá tus artistas favoritos, descubrí próximos shows y disfrutá experiencias con Sucrédito.", "searchPlaceholder": "¿Qué show estás buscando?", "searchButton": "BUSCAR", "heroVideo": "assets/videos/Sin_Banderas.mp4", "heroPoster": "assets/events/Sin_Banderas.jpg", "showsEyebrow": "Elegí tu próximo plan", "showsTitle": "Shows destacados", "showsSubtitle": "Descubrí eventos, artistas y experiencias para vivir con Sucrédito.", "allFilter": "Todos", "musicFilter": "Música", "specialFilter": "Especiales", "sportsFilter": "Deportes", "otherFilter": "Otros", "benefitEyebrow": "Con Sucrédito", "benefitTitle": "Más shows. Más momentos.", "benefitText": "Descubrí propuestas y beneficios pensados para que disfrutes tus experiencias.", "benefit1Title": "🎟️ Shows", "benefit1Text": "Encontrá eventos y propuestas destacadas.", "benefit2Title": "💛 Beneficios", "benefit2Text": "Conocé las opciones disponibles con Sucrédito.", "benefit3Title": "📲 Fácil", "benefit3Text": "Desde tu celu, descubrí tu próximo show.", "footerText": "© Sucrédito · Shows y experiencias", "contactText":"Encontrá información y novedades de nuestros shows y experiencias.", "footerInstagram": "", "footerFacebook": "", "footerWeb": "", "heroTitleColor": "#111111", "heroTitleFont": "Archivo Black", "heroTextColor": "#333333", "heroTextFont": "Inter", "showsTitleColor": "#111111", "showsTitleFont": "Archivo Black", "benefitTitleColor": "#111111", "benefitTitleFont": "Archivo Black", "benefitTextColor": "#333333", "benefitTextFont": "Inter", "accentColor": "#FFEE00", "backgroundColor": "#FFFDF6"};
+const SEED_SITE = {"pageTitle": "Sucrédito · Shows", "navShows": "Shows", "navBenefits": "Beneficios", "navContact": "Contacto", "heroKicker": "Sucrédito presenta", "heroTitle": "VIVÍ LOS SHOWS QUE QUERÉS.", "heroText": "Encontrá tus artistas favoritos, descubrí próximos shows y disfrutá experiencias con Sucrédito.", "searchPlaceholder": "¿Qué show estás buscando?", "searchButton": "BUSCAR", "heroVideo": "assets/videos/Sin_Banderas.mp4", "heroPoster": "assets/events/Sin_Banderas.jpg", "showsEyebrow": "Elegí tu próximo plan", "showsTitle": "Shows destacados", "showsSubtitle": "Descubrí eventos, artistas y experiencias para vivir con Sucrédito.", "allFilter": "Todos", "musicFilter": "Música", "specialFilter": "Especiales", "sportsFilter": "Deportes", "otherFilter": "Otros", "benefitEyebrow": "Con Sucrédito", "benefitTitle": "Más shows. Más momentos.", "benefitText": "Descubrí propuestas y beneficios pensados para que disfrutes tus experiencias.", "benefit1Title": "🎟️ Shows", "benefit1Text": "Encontrá eventos y propuestas destacadas.", "benefit2Title": "💛 Beneficios", "benefit2Text": "Conocé las opciones disponibles con Sucrédito.", "benefit3Title": "📲 Fácil", "benefit3Text": "Desde tu celu, descubrí tu próximo show.", "footerText": "© Sucrédito · Shows y experiencias", "contactText":"Encontrá información y novedades de nuestros shows y experiencias.", "footerInstagram": "", "footerFacebook": "", "footerWeb": "", "heroTitleColor": "#FFFFFF", "heroTitleFont": "Archivo Black", "heroTextColor": "#D6D6D6", "heroTextFont": "Inter", "showsTitleColor": "#111111", "showsTitleFont": "Archivo Black", "benefitTitleColor": "#111111", "benefitTitleFont": "Archivo Black", "benefitTextColor": "#333333", "benefitTextFont": "Inter", "accentColor": "#FFEE00", "backgroundColor": "#FFFDF6"};
 
 function readDraft(key, fallback){
   try { const raw=localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch(e){ return fallback; }
@@ -896,33 +899,39 @@ const showDataPromise = PREVIEW && localStorage.getItem('sucredito_shows_admin_v
   ? Promise.resolve(readDraft('sucredito_shows_admin_v10',SEED_SHOWS))
   : fetchJson('data/shows.json',SEED_SHOWS);
 
-showDataPromise.then(data=>{
-  shows = Array.isArray(data) ? data : SEED_SHOWS;
-  renderShows();
-});
-
 const siteDataPromise = PREVIEW && localStorage.getItem('sucredito_site_draft_v10')
   ? Promise.resolve(readDraft('sucredito_site_draft_v10',SEED_SITE))
   : fetchJson('data/site.json',SEED_SITE);
 
-siteDataPromise.then(site=>{
-  const set=(id,key)=>{const el=document.getElementById(id); if(el && site[key]!==undefined) el.textContent=site[key];};
-  const attrs=(id,key,attr)=>{const el=document.getElementById(id); if(el && site[key]!==undefined) el.setAttribute(attr,site[key]);};
-  set('sitePageTitle','pageTitle'); document.title=site.pageTitle||document.title;
+function applySite(site){
+  if(!site) return;
+  const set=(id,key)=>{const el=document.getElementById(id);if(el&&site[key]!==undefined)el.textContent=site[key];};
+  const attrs=(id,key,attr)=>{const el=document.getElementById(id);if(el&&site[key]!==undefined)el.setAttribute(attr,site[key]);};
+  document.title=site.pageTitle||document.title;
   ['navShows','navBenefits','navContact','heroKicker','heroTitle','heroText','showsEyebrow','showsTitle','showsSubtitle','filterAll','filterMusic','filterSpecial','filterSports','filterOther','benefitEyebrow','benefitTitle','benefitText','benefit1Title','benefit1Text','benefit2Title','benefit2Text','benefit3Title','benefit3Text','footerText','contactText'].forEach(id=>set(id,id));
   attrs('searchInput','searchPlaceholder','placeholder');
-  const sb=document.getElementById('searchBtn'); if(sb && site.searchButton!==undefined) sb.textContent=site.searchButton;
-  const hv=document.getElementById('heroVideo'); if(hv && site.heroVideo){hv.src=site.heroVideo; if(site.heroPoster) hv.poster=site.heroPoster; hv.load();}
+  const sb=document.getElementById('searchBtn');if(sb&&site.searchButton!==undefined)sb.textContent=site.searchButton;
+  const hv=document.getElementById('heroVideo');if(hv&&site.heroVideo){hv.src=site.heroVideo;if(site.heroPoster)hv.poster=site.heroPoster;hv.load();}
   const root=document.documentElement;
-  root.style.setProperty('--site-hero-title-color',site.heroTitleColor||'#111111');
-  root.style.setProperty('--site-hero-text-color',site.heroTextColor||'#333333');
+  root.style.setProperty('--site-hero-title-color',site.heroTitleColor||'#FFFFFF');
+  root.style.setProperty('--site-hero-text-color',site.heroTextColor||'#D6D6D6');
   root.style.setProperty('--site-benefit-title-color',site.benefitTitleColor||'#111111');
   root.style.setProperty('--site-shows-title-color',site.showsTitleColor||'#111111');
   root.style.setProperty('--site-benefit-text-color',site.benefitTextColor||'#333333');
-  const fontMap=[['heroTitle','heroTitleFont'],['heroText','heroTextFont'],['showsTitle','showsTitleFont'],['benefitTitle','benefitTitleFont'],['benefitText','benefitTextFont']];
-  fontMap.forEach(([id,key])=>{const el=document.getElementById(id); if(el&&site[key]) el.style.fontFamily=site[key]+',Inter,Arial,sans-serif';});
-  if(site.backgroundColor) document.body.style.background=site.backgroundColor;
-  if(site.accentColor) document.documentElement.style.setProperty('--yellow',site.accentColor);
+  [['heroTitle','heroTitleFont'],['heroText','heroTextFont'],['showsTitle','showsTitleFont'],['benefitTitle','benefitTitleFont'],['benefitText','benefitTextFont']].forEach(([id,key])=>{const el=document.getElementById(id);if(el&&site[key])el.style.fontFamily=site[key]+',Inter,Arial,sans-serif';});
+  if(site.backgroundColor)document.body.style.background=site.backgroundColor;
+  if(site.accentColor)root.style.setProperty('--yellow',site.accentColor);
+}
+
+showDataPromise.then(data=>{shows=Array.isArray(data)?data:SEED_SHOWS.map(x=>({...x}));renderShows();});
+siteDataPromise.then(site=>applySite(site));
+
+window.addEventListener('message',event=>{
+  if(event.origin!==location.origin)return;
+  const data=event.data;
+  if(!data||data.type!=='SUCRÉDITO_PREVIEW_STATE')return;
+  if(Array.isArray(data.shows)){shows=data.shows;renderShows();}
+  if(data.site)applySite(data.site);
 });
 
 
