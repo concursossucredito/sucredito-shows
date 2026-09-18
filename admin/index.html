@@ -361,6 +361,7 @@ textarea{min-height:105px;resize:vertical}
 </div>
 </div>
 
+<div class="preview-modal" id="previewModal"><div class="preview-window"><div class="preview-window-head"><span>VISTA PREVIA — todavía no está publicado</span><button class="close" id="previewClose" aria-label="Cerrar">×</button></div><iframe id="previewFrame" title="Vista previa del sitio"></iframe></div></div>
 <script>
 // ACCESO TEMPORAL — luego lo reemplazamos por autenticación real.
 const ADMIN_USER = 'admin';
@@ -617,11 +618,32 @@ loadSite();
 
 function saveShowsDraft(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(shows)); statusEl.textContent='Shows guardados como borrador en este navegador.'; }
 function downloadJson(filename,data){ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=filename; a.click(); setTimeout(()=>URL.revokeObjectURL(u),1000); }
-function preparePreview(){ saveShowsDraft(); saveSiteDraft(); localStorage.setItem('sucredito_preview_mode','1'); }
-$('previewBtn').onclick=()=>{ preparePreview(); $('previewModal').classList.add('open'); $('previewFrame').src='../index.html?preview=1&ts='+Date.now(); document.body.style.overflow='hidden'; };
-$('previewClose').onclick=()=>{ $('previewModal').classList.remove('open'); $('previewFrame').src='about:blank'; document.body.style.overflow=''; };
+function preparePreview(){
+  // Guarda exactamente el estado actual antes de abrir la vista previa.
+  saveShowsDraft();
+  saveSiteDraft();
+  localStorage.setItem('sucredito_preview_mode','1');
+}
+$('previewBtn').onclick=()=>{
+  preparePreview();
+  $('previewModal').classList.add('open');
+  document.body.style.overflow='hidden';
+  $('previewFrame').src='about:blank';
+  setTimeout(()=>{ $('previewFrame').src='../index.html?preview=1&ts='+Date.now(); },30);
+};
+$('previewClose').onclick=()=>{
+  $('previewModal').classList.remove('open');
+  $('previewFrame').src='about:blank';
+  document.body.style.overflow='';
+};
 $('previewModal').addEventListener('click',e=>{if(e.target===$('previewModal')) $('previewClose').click()});
-$('finalSaveBtn').onclick=()=>{ saveShowsDraft(); saveSiteDraft(); downloadJson('shows.json',shows); downloadJson('site.json',collectSite()); alert('Listo. Se descargaron shows.json y site.json. Reemplazalos en la carpeta data de GitHub y hacé COMMIT para publicar los cambios.'); };
+$('finalSaveBtn').onclick=()=>{
+  saveShowsDraft();
+  saveSiteDraft();
+  downloadJson('shows.json',shows);
+  downloadJson('site.json',collectSite());
+  alert('Listo. Se descargaron shows.json y site.json. Reemplazalos en la carpeta data de GitHub y hacé COMMIT para publicar los cambios.');
+};
 
 async function init(){
   const saved=localStorage.getItem(STORAGE_KEY);
@@ -644,6 +666,5 @@ async function init(){
 init();
 </script>
 
-<div class="preview-modal" id="previewModal"><div class="preview-window"><div class="preview-window-head"><span>VISTA PREVIA — todavía no está publicado</span><button class="close" id="previewClose" aria-label="Cerrar">×</button></div><iframe id="previewFrame" title="Vista previa del sitio"></iframe></div></div>
 </body>
 </html>
