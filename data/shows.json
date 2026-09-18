@@ -1,23 +1,5 @@
 [
   {
-    "title": "Sin Bandera",
-    "image": "assets/events/Sin_Banderas.jpg",
-    "video": "assets/videos/Sin_Banderas.mp4",
-    "category": "musica",
-    "categoryLabel": "Música",
-    "shortMeta": "Show • Sucrédito",
-    "date": "Próximamente",
-    "city": "Próximamente",
-    "venue": "Próximamente",
-    "description": "Viví el show de Sin Bandera y disfrutá una experiencia especial con Sucrédito.",
-    "benefit": "Beneficios Sucrédito disponibles próximamente.",
-    "purchaseUrl": "",
-    "id": "show-1",
-    "featured": true,
-    "published": true,
-    "sortOrder": 1
-  },
-  {
     "title": "La Mona Jiménez",
     "image": "assets/events/Mona.jpg",
     "video": "assets/videos/Mona_Jimenez.mp4",
@@ -36,22 +18,25 @@
     "sortOrder": 2
   },
   {
+    "id": "show-3",
     "title": "Despedida de La Pulga Rodríguez",
     "image": "assets/events/Despedida_Pulga.jpg",
     "video": "assets/videos/Despedida_Pulga.mp4",
-    "category": "especial",
-    "categoryLabel": "Especial",
+    "category": "deporte",
+    "categoryLabel": "Deporte",
     "shortMeta": "Evento especial • Sucrédito",
     "date": "Próximamente",
-    "city": "Próximamente",
+    "city": "Tucuman",
     "venue": "Próximamente",
     "description": "Una despedida para vivirla en grande. Conocé todos los detalles cuando sean publicados.",
-    "benefit": "Beneficios Sucrédito disponibles próximamente.",
+    "benefit": "4 Cuotas Sin Interes con Sucredito",
     "purchaseUrl": "",
-    "id": "show-3",
-    "featured": false,
+    "featured": true,
     "published": true,
-    "sortOrder": 3
+    "sortOrder": 1,
+    "emoji": "⚽",
+    "titleColor": "#111111",
+    "titleFont": "Georgia"
   },
   {
     "title": "Jesse & Joy",
@@ -88,5 +73,26 @@
     "featured": false,
     "published": true,
     "sortOrder": 5
+  },
+  {
+    "id": "show-mu7b91g0-fbice",
+    "title": "SIN BANDERAS",
+    "image": "assets/events/Sin_Banderas.jpg",
+    "video": "assets/videos/Sin_Banderas.mp4",
+    "category": "musica",
+    "categoryLabel": "Música",
+    "shortMeta": "cscs",
+    "date": "",
+    "city": "",
+    "venue": "",
+    "description": "",
+    "benefit": "",
+    "purchaseUrl": "",
+    "featured": false,
+    "published": true,
+    "sortOrder": 5,
+    "emoji": "",
+    "titleColor": "#da1b1b",
+    "titleFont": "Archivo Black"
   }
 ]
