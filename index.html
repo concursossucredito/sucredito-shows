@@ -522,6 +522,79 @@ h1,h2,h3{margin:0}
   margin-bottom:5px;
 }
 .detail span{font-size:14px;font-weight:800;line-height:1.35}
+
+.modal-countdown{
+  margin:4px 0 20px;
+  padding:16px 16px 15px;
+  border-radius:18px;
+  background:#111;
+  color:#fff;
+  text-align:center;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+.modal-countdown-label{
+  display:block;
+  margin-bottom:8px;
+  color:var(--yellow);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.modal-countdown-time{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:7px;
+  font-variant-numeric:tabular-nums;
+}
+.modal-countdown-block{
+  min-width:42px;
+}
+.modal-countdown-num{
+  display:block;
+  font-family:"Archivo Black",Impact,sans-serif;
+  font-size:29px;
+  line-height:1;
+  letter-spacing:-.03em;
+}
+.modal-countdown-unit{
+  display:block;
+  margin-top:4px;
+  color:#bdbdb7;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.modal-countdown-colon{
+  padding-bottom:13px;
+  color:#777;
+  font-weight:900;
+}
+.modal-transport{
+  margin:0 0 20px;
+  padding:15px 16px;
+  border-left:4px solid var(--yellow);
+  border-radius:14px;
+  background:#f5f5f1;
+}
+.modal-transport-title{
+  margin-bottom:6px;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#777;
+}
+.modal-transport-text{
+  margin:0 !important;
+  color:#222 !important;
+  font-size:13px;
+  line-height:1.5 !important;
+  font-weight:800;
+}
+
 .modal-actions{
   margin-top:auto;
   display:grid;
@@ -664,7 +737,12 @@ h1,h2,h3{margin:0}
   .modal-map-address{max-width:55%;font-size:10px}
   .modal-map iframe{height:220px}
   .modal-actions{grid-template-columns:1fr;gap:8px}
+  .modal-countdown{padding:14px 10px}
+  .modal-countdown-num{font-size:25px}
+  .modal-countdown-block{min-width:37px}
+  .modal-countdown-colon{padding-bottom:11px}
 }
+
 @media (hover:none){
   /* En móvil el video se reproduce dentro de la ventana de detalle. */
 }
@@ -815,6 +893,24 @@ h1,h2,h3{margin:0}
           <div class="detail"><b>Lugar</b><span id="modalVenue"></span></div>
           <div class="detail"><b>Beneficio</b><span id="modalBenefit"></span></div>
         </div>
+
+        <div class="modal-countdown" id="modalCountdown" style="display:none;">
+          <span class="modal-countdown-label">Falta para el show</span>
+          <div class="modal-countdown-time" aria-live="polite">
+            <div class="modal-countdown-block"><span class="modal-countdown-num" id="countDays">00</span><span class="modal-countdown-unit">días</span></div>
+            <span class="modal-countdown-colon">:</span>
+            <div class="modal-countdown-block"><span class="modal-countdown-num" id="countHours">00</span><span class="modal-countdown-unit">horas</span></div>
+            <span class="modal-countdown-colon">:</span>
+            <div class="modal-countdown-block"><span class="modal-countdown-num" id="countMinutes">00</span><span class="modal-countdown-unit">min</span></div>
+            <span class="modal-countdown-colon">:</span>
+            <div class="modal-countdown-block"><span class="modal-countdown-num" id="countSeconds">00</span><span class="modal-countdown-unit">seg</span></div>
+          </div>
+        </div>
+
+        <div class="modal-transport" id="modalTransport" style="display:none;">
+          <div class="modal-transport-title">Transporte público</div>
+          <p class="modal-transport-text" id="modalTransportText"></p>
+        </div>
         <div class="modal-map" id="modalMap" style="display:none;">
           <div class="modal-map-head">
             <div class="modal-map-title">📍 Ubicación</div>
@@ -890,6 +986,14 @@ const modalVenue = document.getElementById('modalVenue');
 const modalBenefit = document.getElementById('modalBenefit');
 const modalBuy = document.getElementById('modalBuy');
 const modalNote = document.getElementById('modalNote');
+const modalCountdown = document.getElementById('modalCountdown');
+const countDays = document.getElementById('countDays');
+const countHours = document.getElementById('countHours');
+const countMinutes = document.getElementById('countMinutes');
+const countSeconds = document.getElementById('countSeconds');
+const modalTransport = document.getElementById('modalTransport');
+const modalTransportText = document.getElementById('modalTransportText');
+let countdownTimer = null;
 const modalMap = document.getElementById('modalMap');
 const modalMapFrame = document.getElementById('modalMapFrame');
 const modalMapAddress = document.getElementById('modalMapAddress');
@@ -1044,6 +1148,49 @@ document.getElementById('searchBtn').addEventListener('click', () => {
   document.getElementById('shows').scrollIntoView({behavior:'smooth', block:'start'});
 });
 
+function stopCountdown(){
+  if(countdownTimer){
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
+}
+
+function renderCountdown(show){
+  stopCountdown();
+  if(!modalCountdown) return;
+
+  const target = Date.parse(show.eventDateTime || '');
+  if(!Number.isFinite(target) || target <= Date.now()){
+    modalCountdown.style.display = 'none';
+    return;
+  }
+
+  modalCountdown.style.display = '';
+
+  const update = () => {
+    const diff = target - Date.now();
+    if(diff <= 0){
+      stopCountdown();
+      modalCountdown.style.display = 'none';
+      return;
+    }
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    countDays.textContent = String(days).padStart(2,'0');
+    countHours.textContent = String(hours).padStart(2,'0');
+    countMinutes.textContent = String(minutes).padStart(2,'0');
+    countSeconds.textContent = String(seconds).padStart(2,'0');
+  };
+
+  update();
+  countdownTimer = setInterval(update,1000);
+}
+
 function mapsUrlFor(show){
   const query = [show.venue, show.address, show.city].filter(Boolean).join(', ');
   if(!query) return '';
@@ -1101,6 +1248,17 @@ function openModal(show, card){
   modalVenue.textContent = show.venue || 'Próximamente';
   modalBenefit.textContent = show.benefit || 'Consultar condiciones vigentes.';
   renderModalMap(show);
+  renderCountdown(show);
+
+  if(modalTransport && modalTransportText){
+    if(show.transport){
+      modalTransportText.textContent = show.transport;
+      modalTransport.style.display = '';
+    }else{
+      modalTransportText.textContent = '';
+      modalTransport.style.display = 'none';
+    }
+  }
 
   /* Si existe video, la ventana muestra el video sin controles nativos.
      La ficha continúa debajo con datos y mapa para seguir deslizando. */
@@ -1141,6 +1299,7 @@ function openModal(show, card){
 }
 
 function closeModal(){
+  stopCountdown();
   modalVideo.pause();
   modalVideo.removeAttribute('src');
   modal.classList.remove('open');
@@ -1167,7 +1326,7 @@ if (heroVideo) {
 
 /* V10: carga robusta de datos + modo vista previa. */
 const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
-const SEED_SHOWS = [{"title": "Sin Bandera", "image": "assets/events/Sin_Banderas.jpg", "video": "assets/videos/Sin_Banderas.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Viví el show de Sin Bandera y disfrutá una experiencia especial con Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-1", "featured": true, "published": true, "sortOrder": 1, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "La Mona Jiménez", "image": "assets/events/Mona.jpg", "video": "assets/videos/Mona_Jimenez.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "La Mona Jiménez llega con toda su energía. Descubrí la propuesta de Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-2", "featured": true, "published": true, "sortOrder": 2, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Despedida de La Pulga Rodríguez", "image": "assets/events/Despedida_Pulga.jpg", "video": "assets/videos/Despedida_Pulga.mp4", "category": "especial", "categoryLabel": "Especial", "shortMeta": "Evento especial • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Una despedida para vivirla en grande. Conocé todos los detalles cuando sean publicados.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-3", "featured": false, "published": true, "sortOrder": 3, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Jesse & Joy", "image": "assets/events/Jeese_&_Joy.jpg", "video": "assets/videos/Jesse_&_Joy.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Jesse & Joy en una experiencia para disfrutar con Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-4", "featured": false, "published": true, "sortOrder": 4, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Los Fundamentalistas", "image": "assets/events/Fundamentalistas.jpg", "video": "assets/videos/Fundamentalistas.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "10/10/2026 • Tucumán", "date": "10 de octubre de 2026", "city": "Tucumán", "venue": "Hipódromo de Tucumán", "description": "Los Fundamentalistas del Aire Acondicionado. Consultá la información del show y las opciones disponibles con Sucrédito.", "benefit": "Consultá condiciones y beneficios vigentes de Sucrédito.", "purchaseUrl": "", "id": "show-5", "featured": false, "published": true, "sortOrder": 5, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}];
+const SEED_SHOWS = [{"title":"Sin Bandera","image":"assets/events/Sin_Banderas.jpg","video":"assets/videos/Sin_Banderas.mp4","category":"musica","categoryLabel":"Música","shortMeta":"Show • Sucrédito","date":"Próximamente","city":"Próximamente","venue":"Próximamente","description":"Viví el show de Sin Bandera y disfrutá una experiencia especial con Sucrédito.","benefit":"Beneficios Sucrédito disponibles próximamente.","purchaseUrl":"","id":"show-1","featured":true,"published":true,"sortOrder":1,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black"},{"title":"La Mona Jiménez","image":"assets/events/Mona.jpg","video":"assets/videos/Mona_Jimenez.mp4","category":"musica","categoryLabel":"Música","shortMeta":"25/10/2026 • Tucumán","date":"Domingo 25 de octubre de 2026","city":"San Miguel de Tucumán","venue":"Palacio de los Deportes","description":"25 de Octubre, 20 hs\nLa Mona llega nuevamente a Tucumán!\n\nEntrada General\n4 cuotas sin interés con tarjeta Sucrédito","benefit":"Entrada General · 4 cuotas sin interés con tarjeta Sucrédito","purchaseUrl":"https://universotickets.com/event_detail/?id=44","id":"show-2","featured":true,"published":true,"sortOrder":2,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black","time":"Apertura de puertas 20:00 h","eventDateTime":"2026-10-25T20:00:00-03:00","transport":"Líneas que llegan: 102, 100, 118"},{"title":"Despedida de La Pulga Rodríguez","image":"assets/events/Despedida_Pulga.jpg","video":"assets/videos/Despedida_Pulga.mp4","category":"especial","categoryLabel":"Especial","shortMeta":"Evento especial • Sucrédito","date":"Próximamente","city":"San Miguel de Tucumán","venue":"Estadio Monumental José Fierro","description":"Una despedida para vivirla en grande. Conocé todos los detalles cuando sean publicados.","benefit":"Beneficios Sucrédito disponibles próximamente.","purchaseUrl":"","id":"show-3","featured":false,"published":true,"sortOrder":3,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black","address":"25 de Mayo 1351","mapLat":-26.81278,"mapLng":-65.19917},{"title":"Jesse & Joy","image":"assets/events/Jeese_&_Joy.jpg","video":"assets/videos/Jesse_&_Joy.mp4","category":"musica","categoryLabel":"Música","shortMeta":"Show • Sucrédito","date":"Próximamente","city":"Próximamente","venue":"Próximamente","description":"Jesse & Joy en una experiencia para disfrutar con Sucrédito.","benefit":"Beneficios Sucrédito disponibles próximamente.","purchaseUrl":"","id":"show-4","featured":false,"published":true,"sortOrder":4,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black"},{"title":"Los Fundamentalistas","image":"assets/events/Fundamentalistas.jpg","video":"assets/videos/Fundamentalistas.mp4","category":"musica","categoryLabel":"Música","shortMeta":"10/10/2026 • Tucumán","date":"10 de octubre de 2026","city":"Tucumán","venue":"Hipódromo de Tucumán","description":"Los Fundamentalistas del Aire Acondicionado. Consultá la información del show y las opciones disponibles con Sucrédito.","benefit":"Consultá condiciones y beneficios vigentes de Sucrédito.","purchaseUrl":"","id":"show-5","featured":false,"published":true,"sortOrder":5,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black"}];
 const SEED_SITE = {"pageTitle": "Sucrédito · Shows", "navShows": "Shows", "navBenefits": "Beneficios", "navContact": "Contacto", "heroKicker": "Sucrédito presenta", "heroTitle": "VIVÍ LOS SHOWS QUE QUERÉS.", "heroText": "Encontrá tus artistas favoritos, descubrí próximos shows y disfrutá experiencias con Sucrédito.", "searchPlaceholder": "¿Qué show estás buscando?", "searchButton": "BUSCAR", "heroVideo": "assets/videos/Sin_Banderas.mp4", "heroPoster": "assets/events/Sin_Banderas.jpg", "showsEyebrow": "Elegí tu próximo plan", "showsTitle": "Shows destacados", "showsSubtitle": "Descubrí eventos, artistas y experiencias para vivir con Sucrédito.", "allFilter": "Todos", "musicFilter": "Música", "specialFilter": "Especiales", "sportsFilter": "Deportes", "otherFilter": "Otros", "benefitEyebrow": "Con Sucrédito", "benefitTitle": "Más shows. Más momentos.", "benefitText": "Descubrí propuestas y beneficios pensados para que disfrutes tus experiencias.", "benefit1Title": "🎟️ Shows", "benefit1Text": "Encontrá eventos y propuestas destacadas.", "benefit2Title": "💛 Beneficios", "benefit2Text": "Conocé las opciones disponibles con Sucrédito.", "benefit3Title": "📲 Fácil", "benefit3Text": "Desde tu celu, descubrí tu próximo show.", "footerText": "© Sucrédito · Shows y experiencias", "contactText":"Encontrá información y novedades de nuestros shows y experiencias.", "footerInstagram": "", "footerFacebook": "", "footerWeb": "", "heroTitleColor": "#FFFFFF", "heroTitleFont": "Archivo Black", "heroTextColor": "#D6D6D6", "heroTextFont": "Inter", "showsTitleColor": "#111111", "showsTitleFont": "Archivo Black", "benefitTitleColor": "#111111", "benefitTitleFont": "Archivo Black", "benefitTextColor": "#333333", "benefitTextFont": "Inter", "accentColor": "#FFEE00", "backgroundColor": "#FFFDF6"};
 
 function readDraft(key, fallback){
