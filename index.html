@@ -483,42 +483,145 @@ h1,h2,h3{margin:0}
   display:block;
 }
 .modal-media video{display:none}
-.modal-info{padding:48px 42px}
-.modal-info .kicker{margin-bottom:15px}
+.modal-info{
+  padding:42px 38px 38px;
+  display:flex;
+  flex-direction:column;
+}
+.modal-info .kicker{margin-bottom:15px;align-self:flex-start}
 .modal-info h2{
   font-family:"Archivo Black",Impact,sans-serif;
   font-size:clamp(36px,5vw,58px);
   line-height:.95;
-  margin-bottom:18px;
+  letter-spacing:-.03em;
+  margin-bottom:16px;
 }
-.modal-info p{line-height:1.65;color:#555}
+.modal-info p{
+  line-height:1.65;
+  color:#555;
+  margin:0 0 6px;
+}
 .details{
-  margin:25px 0;
+  margin:24px 0 20px;
   display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:10px;
 }
 .detail{
   background:#f5f5f1;
-  border-radius:13px;
-  padding:13px 15px;
+  border-radius:14px;
+  padding:14px 15px;
+  min-height:69px;
 }
-.detail b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#777;margin-bottom:4px}
-.detail span{font-size:14px;font-weight:700}
+.detail b{
+  display:block;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:#777;
+  margin-bottom:5px;
+}
+.detail span{font-size:14px;font-weight:800;line-height:1.35}
+.modal-actions{
+  margin-top:auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
 .modal-button{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  background:var(--yellow);
+  min-height:52px;
   border:0;
-  border-radius:13px;
-  padding:15px 19px;
+  border-radius:14px;
+  padding:14px 18px;
   font-weight:900;
+  text-align:center;
+  text-decoration:none;
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.modal-buy{
+  background:var(--yellow);
+  color:var(--black);
+}
+
+.modal-actions-single{
+  grid-template-columns:1fr !important;
+}
+.modal-location{
+  background:#E30613;
+  color:#fff;
+}
+.modal-button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 22px rgba(0,0,0,.12);
 }
 .modal-button.disabled{
   background:#e8e8e3;
   color:#888;
   cursor:default;
+  box-shadow:none;
+  transform:none;
 }
+.modal-note{
+  margin-top:10px;
+  font-size:11px;
+  color:#8a8a85;
+  line-height:1.4;
+}
+
+
+.modal-map{
+  margin:2px 0 20px;
+  border:1px solid #e3e3dd;
+  border-radius:18px;
+  overflow:hidden;
+  background:#f2f2ee;
+  box-shadow:0 8px 22px rgba(0,0,0,.06);
+}
+.modal-map-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  background:#fff;
+  border-bottom:1px solid #e9e9e4;
+}
+.modal-map-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.modal-map-address{
+  color:#777;
+  font-size:11px;
+  text-align:right;
+}
+.modal-map iframe{
+  width:100%;
+  height:260px;
+  display:block;
+  border:0;
+}
+.modal-map-open{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 14px;
+  background:#111;
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  text-decoration:none;
+  letter-spacing:.02em;
+}
+.modal-map-open:hover{text-decoration:underline}
 
 @media (max-width:900px){
   .hero-inner{grid-template-columns:1fr;min-height:auto;padding-top:55px}
@@ -551,8 +654,16 @@ h1,h2,h3{margin:0}
   .modal-content{grid-template-columns:1fr}
   .modal-media{min-height:330px;max-height:48vh}
   .modal-media img,.modal-media video{object-fit:contain}
-  .modal-info{padding:28px 22px 30px}
+  .modal-info{padding:28px 20px 24px}
   .modal-info h2{font-size:40px}
+  .details{grid-template-columns:1fr 1fr;gap:8px;margin:20px 0 18px}
+  .detail{padding:12px 13px;min-height:65px}
+  .detail span{font-size:13px}
+  .modal-map{margin-bottom:18px}
+  .modal-map-head{align-items:flex-start}
+  .modal-map-address{max-width:55%;font-size:10px}
+  .modal-map iframe{height:220px}
+  .modal-actions{grid-template-columns:1fr;gap:8px}
 }
 @media (hover:none){
   /* En móvil el video se reproduce dentro de la ventana de detalle. */
@@ -571,6 +682,21 @@ h1,h2,h3{margin:0}
 
 
 .section-subtitle{margin:8px 0 0;color:#666;max-width:720px;line-height:1.5}
+
+@media (max-width:650px){
+  .modal-box{
+    max-height:96vh;
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .modal-info{
+    padding-bottom:32px;
+  }
+  .modal-map{
+    margin-top:12px;
+  }
+}
+
 </style>
 </head>
 
@@ -684,11 +810,23 @@ h1,h2,h3{margin:0}
         <p id="modalDescription"></p>
         <div class="details">
           <div class="detail"><b>Fecha</b><span id="modalDate"></span></div>
+          <div class="detail" id="modalTimeWrap"><b>Hora</b><span id="modalTime"></span></div>
           <div class="detail"><b>Ciudad</b><span id="modalCity"></span></div>
           <div class="detail"><b>Lugar</b><span id="modalVenue"></span></div>
           <div class="detail"><b>Beneficio</b><span id="modalBenefit"></span></div>
         </div>
-        <button class="modal-button disabled" type="button">Información próximamente</button>
+        <div class="modal-map" id="modalMap" style="display:none;">
+          <div class="modal-map-head">
+            <div class="modal-map-title">📍 Ubicación</div>
+            <div class="modal-map-address" id="modalMapAddress"></div>
+          </div>
+          <iframe id="modalMapFrame" title="Mapa de ubicación del espectáculo" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <a class="modal-map-open" id="modalMapOpen" href="#" target="_blank" rel="noopener noreferrer">ABRIR EN GOOGLE MAPS ↗</a>
+        </div>
+        <div class="modal-actions modal-actions-single">
+          <button class="modal-button modal-buy disabled" id="modalBuy" type="button">Entradas próximamente</button>
+        </div>
+        <div class="modal-note" id="modalNote">La información puede actualizarse desde Sucrédito.</div>
       </div>
     </div>
   </div>
@@ -745,10 +883,17 @@ const modalVideo = document.getElementById('modalVideo');
 const modalTitle = document.getElementById('modalTitle');
 const modalDescription = document.getElementById('modalDescription');
 const modalDate = document.getElementById('modalDate');
+const modalTime = document.getElementById('modalTime');
+const modalTimeWrap = document.getElementById('modalTimeWrap');
 const modalCity = document.getElementById('modalCity');
 const modalVenue = document.getElementById('modalVenue');
 const modalBenefit = document.getElementById('modalBenefit');
-const modalButton = document.querySelector('.modal-button');
+const modalBuy = document.getElementById('modalBuy');
+const modalNote = document.getElementById('modalNote');
+const modalMap = document.getElementById('modalMap');
+const modalMapFrame = document.getElementById('modalMapFrame');
+const modalMapAddress = document.getElementById('modalMapAddress');
+const modalMapOpen = document.getElementById('modalMapOpen');
 
 function normalize(text=''){
   return text.toString().toLowerCase()
@@ -899,6 +1044,39 @@ document.getElementById('searchBtn').addEventListener('click', () => {
   document.getElementById('shows').scrollIntoView({behavior:'smooth', block:'start'});
 });
 
+function mapsUrlFor(show){
+  const query = [show.venue, show.address, show.city].filter(Boolean).join(', ');
+  if(!query) return '';
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(query);
+}
+
+function renderModalMap(show){
+  if(!modalMap || !modalMapFrame || !modalMapOpen) return;
+
+  const lat = Number(show.mapLat);
+  const lng = Number(show.mapLng);
+  const hasCoords = Number.isFinite(lat) && Number.isFinite(lng);
+  const mapsUrl = mapsUrlFor(show);
+
+  modalMapFrame.src = 'about:blank';
+  modalMapAddress.textContent = '';
+  modalMapOpen.href = mapsUrl || '#';
+
+  if(!hasCoords){
+    modalMap.style.display = 'none';
+    return;
+  }
+
+  const pad = 0.0048;
+  const bbox = [lng-pad, lat-pad, lng+pad, lat+pad].join(',');
+  const embedUrl = 'https://www.openstreetmap.org/export/embed.html?bbox=' + encodeURIComponent(bbox) + '&layer=mapnik&marker=' + encodeURIComponent(lat + ',' + lng);
+
+  modalMapFrame.src = embedUrl;
+  modalMapAddress.textContent = show.address || [show.venue, show.city].filter(Boolean).join(', ');
+  modalMapOpen.style.display = mapsUrl ? '' : 'none';
+  modalMap.style.display = '';
+}
+
 function openModal(show, card){
   stopPreview(card, card.querySelector('video'));
 
@@ -910,12 +1088,22 @@ function openModal(show, card){
   modalTitle.style.fontFamily = (show.titleFont || 'Archivo Black') + ',Inter,Arial,sans-serif';
   modalDescription.textContent = show.description || '';
   modalDate.textContent = show.date || 'Próximamente';
+
+  if(show.time){
+    modalTime.textContent = show.time;
+    modalTimeWrap.style.display = '';
+  }else{
+    modalTime.textContent = 'A confirmar';
+    modalTimeWrap.style.display = '';
+  }
+
   modalCity.textContent = show.city || 'Próximamente';
   modalVenue.textContent = show.venue || 'Próximamente';
   modalBenefit.textContent = show.benefit || 'Consultar condiciones vigentes.';
+  renderModalMap(show);
 
-  /* Si existe video, la ventana muestra el video y trata de reproducirlo en mute.
-     Si el navegador no permite autoplay, quedan visibles los controles para tocar Play. */
+  /* Si existe video, la ventana muestra el video sin controles nativos.
+     La ficha continúa debajo con datos y mapa para seguir deslizando. */
   modalVideo.pause();
   modalVideo.removeAttribute('src');
   modalVideo.style.display = 'none';
@@ -936,13 +1124,15 @@ function openModal(show, card){
   }
 
   if (show.purchaseUrl) {
-    modalButton.classList.remove('disabled');
-    modalButton.textContent = 'COMPRAR / VER EVENTO';
-    modalButton.onclick = () => window.open(show.purchaseUrl, '_blank', 'noopener,noreferrer');
+    modalBuy.classList.remove('disabled');
+    modalBuy.textContent = '🎟️ COMPRAR ENTRADAS';
+    modalBuy.onclick = () => window.open(show.purchaseUrl, '_blank', 'noopener,noreferrer');
+    modalNote.textContent = 'Se abrirá el sitio oficial de compra en una nueva pestaña.';
   } else {
-    modalButton.classList.add('disabled');
-    modalButton.textContent = 'Información próximamente';
-    modalButton.onclick = null;
+    modalBuy.classList.add('disabled');
+    modalBuy.textContent = '🎟️ ENTRADAS PRÓXIMAMENTE';
+    modalBuy.onclick = null;
+    modalNote.textContent = 'Cuando tengamos el link oficial, aparecerá acá el botón de compra.';
   }
 
   modal.classList.add('open');
