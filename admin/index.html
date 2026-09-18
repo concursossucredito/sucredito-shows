@@ -123,15 +123,55 @@ textarea{min-height:105px;resize:vertical}
   .form{grid-template-columns:1fr;padding:18px}.full{grid-column:auto}
   .panel-head{padding:17px}.panel-head h2{font-size:22px}
 }
+
+
+.site-editor-box{background:#fff;border:1px solid var(--line);border-radius:20px;margin-bottom:18px;overflow:hidden}
+.site-head{padding:20px 22px;background:#fafaf7;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:20px;align-items:center}
+.site-head h2{font-family:"Archivo Black",Impact,sans-serif;font-size:28px;margin:5px 0 8px}.site-head p{margin:0;color:#666;font-size:12px;line-height:1.5}.site-actions{display:flex;gap:8px;flex-wrap:wrap}.site-grid{padding:20px;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.site-grid label{display:grid}.site-save{border-top:1px solid #eee;background:#fafaf7;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px}.site-save span{font-size:11px;font-weight:800;color:#777}@media(max-width:760px){.site-head{display:block}.site-actions{margin-top:15px}.site-grid{grid-template-columns:1fr;padding:16px}.site-save{display:block}.site-save button{width:100%;margin-top:10px}}
+
+.login-screen{position:fixed;inset:0;z-index:9999;background:#111;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{width:min(420px,100%);background:white;border-radius:24px;overflow:hidden;box-shadow:0 30px 100px rgba(0,0,0,.45)}
+.login-head{background:var(--yellow);padding:26px;text-align:center}
+.login-head img{width:170px;max-width:70%;display:block;margin:0 auto 15px}
+.login-head h1{font-size:28px;margin:0}
+.login-body{padding:25px}
+.login-body label{margin-bottom:14px}
+.login-error{display:none;background:#fff0f1;color:var(--red);border:1px solid #f2c5cb;padding:10px 12px;border-radius:10px;font-size:11px;font-weight:800;margin-bottom:12px}
+.login-btn{width:100%;border:0;background:var(--yellow);padding:14px;border-radius:11px;font-weight:900;margin-top:4px}
+.login-note{font-size:10px;color:#777;line-height:1.5;text-align:center;margin:15px 0 0}
+.app-hidden{display:none!important}
+.logout{font-size:11px;font-weight:900;background:white;border:1px solid #ddd;padding:10px 12px;border-radius:10px}
+@media(max-width:760px){.login-card{border-radius:18px}.login-body{padding:20px}}
 </style>
 </head>
 <body>
 
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-head">
+      <img src="../assets/logo.png" alt="Sucrédito">
+      <h1>ADMINISTRADOR</h1>
+    </div>
+    <form class="login-body" id="loginForm">
+      <div class="login-error" id="loginError">Usuario o contraseña incorrectos.</div>
+      <label>Usuario
+        <input id="loginUser" autocomplete="username" required>
+      </label>
+      <label>Contraseña
+        <input id="loginPass" type="password" autocomplete="current-password" required>
+      </label>
+      <button class="login-btn" type="submit">INGRESAR</button>
+      <p class="login-note">Acceso administrativo. En esta primera versión el acceso es local; en la siguiente etapa hacemos la seguridad real.</p>
+    </form>
+  </div>
+</div>
+
+<div id="app" class="app-hidden">
 <header class="top">
   <div class="top-in">
     <div class="logo-box"><img src="../assets/logo.png" class="logo" alt="Sucrédito"></div>
     <div class="brand-title">ADMINISTRADOR DE SHOWS</div>
-    <a class="back" href="../index.html">VER SITIO</a>
+    <div style="display:flex;gap:8px;align-items:center;margin-left:auto"><button class="logout" id="logoutBtn">SALIR</button><a class="back" href="../index.html">VER SITIO</a></div>
   </div>
 </header>
 
@@ -140,13 +180,37 @@ textarea{min-height:105px;resize:vertical}
     <div>
       <div class="kicker">Panel de gestión</div>
       <h1>Shows</h1>
-      <p>Agregá, editá, ocultá, destacá y ordená los eventos. Los cambios se guardan en este navegador y se pueden exportar a <strong>shows.json</strong> para publicar en GitHub Pages.</p>
+      <p>Administrá los shows y el contenido general de la página. Los cambios se guardan en este navegador y podés exportar los archivos JSON listos para publicar en GitHub.</p>
     </div>
   </div>
 
   <div class="notice">
-    <strong>Cómo funciona esta versión:</strong> GitHub Pages es un sitio estático, por lo que una página publicada no puede modificar por sí sola el archivo <code>data/shows.json</code> del repositorio. Este panel permite administrar todo visualmente, importar/exportar el JSON y dejarlo listo para reemplazar en GitHub. Más adelante podemos conectar una base/CMS o automatizar el guardado con GitHub Actions.
+    <strong>Cómo funciona:</strong> desde acá modificás los datos del sitio. Los textos generales se guardan en <code>data/site.json</code> y los shows en <code>data/shows.json</code>. Las imágenes y videos se suben manualmente a GitHub y acá solo indicás su ruta. En esta etapa, para publicar para todos los visitantes, exportá los JSON y reemplazalos en GitHub.
   </div>
+
+  <section class="site-editor-box">
+    <div class="site-head"><div><div class="kicker">Contenido general</div><h2>Editar página principal</h2><p>Todo lo que cambies acá controla textos, enlaces y video principal del <code>index.html</code>.</p></div><div class="site-actions"><button class="btn" id="importSiteBtn">IMPORTAR site.json</button><button class="btn dark" id="exportSiteBtn">EXPORTAR site.json</button></div></div>
+    <input type="file" id="siteJsonFile" accept="application/json,.json" hidden>
+    <div class="site-grid">
+      <label>Título de pestaña<input id="site_pageTitle"></label>
+      <label>Menú: Shows<input id="site_navShows"></label><label>Menú: Beneficios<input id="site_navBenefits"></label><label>Menú: Contacto<input id="site_navContact"></label>
+      <label>Hero: etiqueta<input id="site_heroKicker"></label>
+      <label class="full">Hero: título<input id="site_heroTitle"></label>
+      <label class="full">Hero: texto<textarea id="site_heroText"></textarea></label>
+      <label>Buscador<input id="site_searchPlaceholder"></label><label>Botón buscar<input id="site_searchButton"></label>
+      <label>Video principal<input id="site_heroVideo" placeholder="assets/videos/Sin_Banderas.mp4"></label><label>Imagen respaldo<input id="site_heroPoster" placeholder="assets/events/Sin_Banderas.jpg"></label>
+      <label>Shows: etiqueta<input id="site_showsEyebrow"></label><label>Shows: título<input id="site_showsTitle"></label>
+      <label class="full">Shows: subtítulo<textarea id="site_showsSubtitle"></textarea></label>
+      <label>Filtro: Todos<input id="site_allFilter"></label><label>Filtro: Música<input id="site_musicFilter"></label><label>Filtro: Especial<input id="site_specialFilter"></label><label>Filtro: Deporte<input id="site_sportsFilter"></label><label>Filtro: Otros<input id="site_otherFilter"></label>
+      <label>Beneficios: etiqueta<input id="site_benefitEyebrow"></label><label>Beneficios: título<input id="site_benefitTitle"></label>
+      <label class="full">Beneficios: texto<textarea id="site_benefitText"></textarea></label>
+      <label>Beneficio 1<input id="site_benefit1Title"></label><label>Texto 1<input id="site_benefit1Text"></label>
+      <label>Beneficio 2<input id="site_benefit2Title"></label><label>Texto 2<input id="site_benefit2Text"></label>
+      <label>Beneficio 3<input id="site_benefit3Title"></label><label>Texto 3<input id="site_benefit3Text"></label>
+      <label class="full">Pie de página<input id="site_footerText"></label>
+    </div>
+    <div class="site-save"><span id="siteStatus">Sin cambios.</span><button class="btn primary" id="saveSiteBtn">GUARDAR CONTENIDO</button></div>
+  </section>
 
   <div class="toolbar">
     <button class="btn primary" id="newBtn">+ NUEVO SHOW</button>
@@ -265,8 +329,42 @@ textarea{min-height:105px;resize:vertical}
     </div>
   </div>
 </div>
+</div>
 
 <script>
+// ACCESO TEMPORAL — luego lo reemplazamos por autenticación real.
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'Sucredito2026!';
+const SESSION_KEY = 'sucredito_admin_session';
+
+const loginScreen = document.getElementById('loginScreen');
+const app = document.getElementById('app');
+const loginForm = document.getElementById('loginForm');
+const loginError = document.getElementById('loginError');
+
+function showApp(){ loginScreen.style.display='none'; app.classList.remove('app-hidden'); }
+function login(){
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(u===ADMIN_USER && p===ADMIN_PASS){
+    sessionStorage.setItem(SESSION_KEY,'1');
+    loginError.style.display='none';
+    showApp();
+  }else{
+    loginError.style.display='block';
+    document.getElementById('loginPass').select();
+  }
+}
+loginForm.addEventListener('submit',e=>{e.preventDefault();login()});
+document.getElementById('logoutBtn').addEventListener('click',()=>{
+  sessionStorage.removeItem(SESSION_KEY);
+  app.classList.add('app-hidden');
+  loginScreen.style.display='flex';
+  loginForm.reset();
+  document.getElementById('loginUser').focus();
+});
+if(sessionStorage.getItem(SESSION_KEY)==='1') showApp();
+
 const STORAGE_KEY = 'sucredito_shows_admin_v1';
 const tbody = document.getElementById('tbody');
 const empty = document.getElementById('empty');
@@ -502,6 +600,19 @@ $('videoFile').addEventListener('change',e=>{
   $('video').value='assets/videos/'+file.name;
   $('videoPreview').src=URL.createObjectURL(file);
 });
+
+const SITE_STORAGE_KEY='sucredito_site_draft_v7';
+const siteFields=['pageTitle','navShows','navBenefits','navContact','heroKicker','heroTitle','heroText','searchPlaceholder','searchButton','heroVideo','heroPoster','showsEyebrow','showsTitle','showsSubtitle','allFilter','musicFilter','specialFilter','sportsFilter','otherFilter','benefitEyebrow','benefitTitle','benefitText','benefit1Title','benefit1Text','benefit2Title','benefit2Text','benefit3Title','benefit3Text','footerText'];
+let siteData={};
+function setSiteForm(data){siteData={...data}; siteFields.forEach(k=>{const el=document.getElementById('site_'+k); if(el) el.value=data[k]??'';});}
+function collectSite(){const out={}; siteFields.forEach(k=>{const el=document.getElementById('site_'+k); if(el) out[k]=el.value;}); return out;}
+function saveSiteDraft(){siteData=collectSite();localStorage.setItem(SITE_STORAGE_KEY,JSON.stringify(siteData));document.getElementById('siteStatus').textContent='Contenido guardado en este navegador.';}
+async function loadSite(){const saved=localStorage.getItem(SITE_STORAGE_KEY); if(saved){try{setSiteForm(JSON.parse(saved));return;}catch(e){}} try{const r=await fetch('../data/site.json?ts='+Date.now(),{cache:'no-store'});setSiteForm(await r.json());}catch(e){setSiteForm({});}}
+document.getElementById('saveSiteBtn').onclick=saveSiteDraft;
+document.getElementById('exportSiteBtn').onclick=()=>{const data=collectSite();const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='site.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);document.getElementById('siteStatus').textContent='site.json exportado.';};
+document.getElementById('importSiteBtn').onclick=()=>document.getElementById('siteJsonFile').click();
+document.getElementById('siteJsonFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{setSiteForm(JSON.parse(rd.result));saveSiteDraft();alert('site.json importado correctamente.');}catch(err){alert('No se pudo importar: '+err.message)}e.target.value='';};rd.readAsText(f);});
+loadSite();
 
 async function init(){
   const saved=localStorage.getItem(STORAGE_KEY);
