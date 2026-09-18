@@ -1,5 +1,26 @@
 [
   {
+    "title": "Sin Bandera",
+    "image": "assets/events/Sin_Banderas.jpg",
+    "video": "assets/videos/Sin_Banderas.mp4",
+    "category": "musica",
+    "categoryLabel": "Música",
+    "shortMeta": "Show • Sucrédito",
+    "date": "Próximamente",
+    "city": "Próximamente",
+    "venue": "Próximamente",
+    "description": "Viví el show de Sin Bandera y disfrutá una experiencia especial con Sucrédito.",
+    "benefit": "Beneficios Sucrédito disponibles próximamente.",
+    "purchaseUrl": "",
+    "id": "show-1",
+    "featured": true,
+    "published": true,
+    "sortOrder": 1,
+    "emoji": "",
+    "titleColor": "#111111",
+    "titleFont": "Archivo Black"
+  },
+  {
     "title": "La Mona Jiménez",
     "image": "assets/events/Mona.jpg",
     "video": "assets/videos/Mona_Jimenez.mp4",
@@ -15,28 +36,34 @@
     "id": "show-2",
     "featured": true,
     "published": true,
-    "sortOrder": 2
+    "sortOrder": 2,
+    "emoji": "",
+    "titleColor": "#111111",
+    "titleFont": "Archivo Black"
   },
   {
-    "id": "show-3",
     "title": "Despedida de La Pulga Rodríguez",
     "image": "assets/events/Despedida_Pulga.jpg",
     "video": "assets/videos/Despedida_Pulga.mp4",
-    "category": "deporte",
-    "categoryLabel": "Deporte",
+    "category": "especial",
+    "categoryLabel": "Especial",
     "shortMeta": "Evento especial • Sucrédito",
     "date": "Próximamente",
-    "city": "Tucuman",
-    "venue": "Próximamente",
+    "city": "San Miguel de Tucumán",
+    "venue": "Estadio Monumental José Fierro",
     "description": "Una despedida para vivirla en grande. Conocé todos los detalles cuando sean publicados.",
-    "benefit": "4 Cuotas Sin Interes con Sucredito",
+    "benefit": "Beneficios Sucrédito disponibles próximamente.",
     "purchaseUrl": "",
-    "featured": true,
+    "id": "show-3",
+    "featured": false,
     "published": true,
-    "sortOrder": 1,
-    "emoji": "⚽",
+    "sortOrder": 3,
+    "emoji": "",
     "titleColor": "#111111",
-    "titleFont": "Georgia"
+    "titleFont": "Archivo Black",
+    "address": "25 de Mayo 1351",
+    "mapLat": -26.81278,
+    "mapLng": -65.19917
   },
   {
     "title": "Jesse & Joy",
@@ -54,7 +81,10 @@
     "id": "show-4",
     "featured": false,
     "published": true,
-    "sortOrder": 4
+    "sortOrder": 4,
+    "emoji": "",
+    "titleColor": "#111111",
+    "titleFont": "Archivo Black"
   },
   {
     "title": "Los Fundamentalistas",
@@ -72,27 +102,9 @@
     "id": "show-5",
     "featured": false,
     "published": true,
-    "sortOrder": 5
-  },
-  {
-    "id": "show-mu7b91g0-fbice",
-    "title": "SIN BANDERAS",
-    "image": "assets/events/Sin_Banderas.jpg",
-    "video": "assets/videos/Sin_Banderas.mp4",
-    "category": "musica",
-    "categoryLabel": "Música",
-    "shortMeta": "cscs",
-    "date": "",
-    "city": "",
-    "venue": "",
-    "description": "",
-    "benefit": "",
-    "purchaseUrl": "",
-    "featured": false,
-    "published": true,
     "sortOrder": 5,
     "emoji": "",
-    "titleColor": "#da1b1b",
+    "titleColor": "#111111",
     "titleFont": "Archivo Black"
   }
 ]
