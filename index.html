@@ -26,13 +26,15 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
+  color-scheme:light;
   margin:0;
   background:var(--paper);
   color:var(--ink);
   font-family:Inter,Arial,sans-serif;
 }
 button,input{font:inherit}
-button{cursor:pointer}
+button{cursor:pointer;-webkit-appearance:none;appearance:none}
+button::-webkit-focus-inner{border:0;padding:0}
 a{color:inherit;text-decoration:none}
 
 .header{
@@ -207,13 +209,18 @@ h1,h2,h3{margin:0}
 .filter{
   border:1px solid #d9d9d4;
   background:white;
+  color:#111111;
+  -webkit-text-fill-color:#111111;
   border-radius:999px;
   padding:10px 15px;
   font-size:13px;
   font-weight:800;
+  border:1px solid var(--line);
 }
 .filter.active,.filter:hover{
   background:var(--yellow);
+  color:#111111;
+  -webkit-text-fill-color:#111111;
   border-color:var(--yellow);
 }
 
@@ -230,6 +237,9 @@ h1,h2,h3{margin:0}
   box-shadow:0 8px 25px rgba(0,0,0,.04);
   transition:transform .25s ease,box-shadow .25s ease;
   cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  height:100%;
 }
 .card:hover{
   transform:translateY(-5px);
@@ -274,7 +284,12 @@ h1,h2,h3{margin:0}
   text-transform:uppercase;
 }
 /* El video se descubre con el hover en desktop; no agregamos íconos sobre las placas. */
-.card-body{padding:19px 19px 20px}
+.card-body{
+  padding:19px 19px 20px;
+  display:flex;
+  flex-direction:column;
+  flex:1;
+}
 .card-title{
   font-family:"Archivo Black",Impact,sans-serif;
   font-size:24px;
@@ -290,18 +305,65 @@ h1,h2,h3{margin:0}
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-top:18px;
+  margin-top:auto;
+  padding-top:18px;
   font-size:12px;
   font-weight:900;
 }
 .arrow{
-  width:31px;
-  height:31px;
+  width:52px;
+  height:52px;
+  min-width:52px;
   border-radius:50%;
-  background:var(--yellow);
-  display:grid;
-  place-items:center;
-  font-size:17px;
+  background:#E30613;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  border:0;
+  padding:0;
+  box-shadow:0 9px 20px rgba(227,6,19,.20);
+  -webkit-appearance:none;
+  appearance:none;
+  transition:transform .22s ease, box-shadow .22s ease;
+}
+
+/* Flechas dibujadas como el detalle del logo Sucrédito: dos chevrones blancos gruesos, redondeados y centrados. */
+.arrow svg{
+  width:24px;
+  height:21px;
+  transform:translateX(2px);
+  display:block;
+  overflow:visible;
+}
+
+.arrow svg path{
+  fill:none;
+  stroke:#fff;
+  stroke-width:5.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+@media (hover:hover) and (pointer:fine){
+  .arrow:hover{
+    transform:translateX(3px);
+    box-shadow:0 11px 24px rgba(227,6,19,.28);
+  }
+}
+
+@media (max-width:700px){
+  .arrow{
+    width:48px;
+    height:48px;
+    min-width:48px;
+  }
+  .arrow svg{
+    width:22px;
+    height:19px;
+    transform:translateX(2px);
+  }
 }
 
 .empty{
@@ -480,7 +542,7 @@ h1,h2,h3{margin:0}
   .card-body{padding:14px}
   .card-title{font-size:19px}
   .card-meta{font-size:11px}
-  .card-cta{margin-top:13px}
+  .card-cta{margin-top:auto;padding-top:13px}
   .benefits{padding:27px 20px;border-radius:24px}
   .benefits h2{font-size:34px}
   .benefit-grid{grid-template-columns:1fr}
@@ -729,7 +791,7 @@ function renderShows(){
         <div class="card-meta">${escapeHtml(show.shortMeta || 'Show • Sucrédito')}</div>
         <div class="card-cta">
           <span>Ver detalles</span>
-          <span class="arrow">→</span>
+          <span class="arrow" aria-hidden="true"><svg viewBox="0 0 28 24" role="presentation" focusable="false"><path d="M2 2L12 12L2 22"/><path d="M14 2L24 12L14 22"/></svg></span>
         </div>
       </div>
     `;
