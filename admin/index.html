@@ -142,6 +142,28 @@ textarea{min-height:105px;resize:vertical}
 .app-hidden{display:none!important}
 .logout{font-size:11px;font-weight:900;background:white;border:1px solid #ddd;padding:10px 12px;border-radius:10px}
 @media(max-width:760px){.login-card{border-radius:18px}.login-body{padding:20px}}
+
+/* V8: editor desplegable + borrador + vista previa */
+.accordion{background:#fff;border:1px solid var(--line);border-radius:18px;margin-bottom:12px;overflow:hidden}
+.accordion summary{list-style:none;cursor:pointer;padding:17px 19px;display:flex;align-items:center;justify-content:space-between;gap:15px;background:#fafaf7;font-weight:900;font-size:14px}
+.accordion summary::-webkit-details-marker{display:none}
+.accordion summary:after{content:'+';font-size:22px;line-height:1}
+.accordion[open] summary:after{content:'−'}
+.accordion-body{padding:18px;border-top:1px solid #eee}
+.section-note{font-size:11px;color:#777;font-weight:600;margin:0 0 14px;line-height:1.45}
+.preview-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 18px}
+.preview-toolbar .btn{min-height:42px}
+.preview-note{font-size:11px;color:#666;font-weight:700}
+.show-card{background:#fff;border:1px solid var(--line);border-radius:18px;margin-bottom:12px;overflow:hidden}
+.show-summary{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:12px 14px;cursor:pointer;background:#fff}
+.show-summary img{width:52px;height:64px;object-fit:cover;border-radius:9px;background:#eee}
+.show-summary .show-main{min-width:0}.show-summary .show-name{font-weight:900;font-size:14px}.show-summary .show-meta{font-size:11px;color:#777;margin-top:4px}
+.show-summary .show-status{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.show-expand{display:none;padding:18px;border-top:1px solid #eee;background:#fafaf7}
+.show-card.open .show-expand{display:block}.show-chevron{font-size:20px;font-weight:900;margin-left:6px}
+@media(max-width:760px){.show-summary{grid-template-columns:52px 1fr}.show-summary .show-status{grid-column:2;justify-content:flex-start}.show-summary img{width:44px;height:55px}}
+.preview-modal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;padding:12px;display:none}
+.preview-modal.open{display:flex;align-items:center;justify-content:center}.preview-window{width:min(1280px,100%);height:min(94vh,900px);background:#111;border-radius:20px;overflow:hidden;display:flex;flex-direction:column}.preview-window-head{background:var(--yellow);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:900}.preview-window iframe{width:100%;height:100%;border:0;background:white}
 </style>
 </head>
 <body>
@@ -189,32 +211,41 @@ textarea{min-height:105px;resize:vertical}
   </div>
 
   <section class="site-editor-box">
-    <div class="site-head"><div><div class="kicker">Contenido general</div><h2>Editar página principal</h2><p>Todo lo que cambies acá controla textos, enlaces y video principal del <code>index.html</code>.</p></div><div class="site-actions"><button class="btn" id="importSiteBtn">IMPORTAR site.json</button><button class="btn dark" id="exportSiteBtn">EXPORTAR site.json</button></div></div>
-    <input type="file" id="siteJsonFile" accept="application/json,.json" hidden>
-    <div class="site-grid">
-      <label>Título de pestaña<input id="site_pageTitle"></label>
-      <label>Menú: Shows<input id="site_navShows"></label><label>Menú: Beneficios<input id="site_navBenefits"></label><label>Menú: Contacto<input id="site_navContact"></label>
-      <label>Hero: etiqueta<input id="site_heroKicker"></label>
-      <label class="full">Hero: título<input id="site_heroTitle"></label>
-      <label class="full">Hero: texto<textarea id="site_heroText"></textarea></label>
-      <label>Buscador<input id="site_searchPlaceholder"></label><label>Botón buscar<input id="site_searchButton"></label>
-      <label>Video principal<input id="site_heroVideo" placeholder="assets/videos/Sin_Banderas.mp4"></label><label>Imagen respaldo<input id="site_heroPoster" placeholder="assets/events/Sin_Banderas.jpg"></label>
-      <label>Shows: etiqueta<input id="site_showsEyebrow"></label><label>Shows: título<input id="site_showsTitle"></label>
-      <label class="full">Shows: subtítulo<textarea id="site_showsSubtitle"></textarea></label>
-      <label>Filtro: Todos<input id="site_allFilter"></label><label>Filtro: Música<input id="site_musicFilter"></label><label>Filtro: Especial<input id="site_specialFilter"></label><label>Filtro: Deporte<input id="site_sportsFilter"></label><label>Filtro: Otros<input id="site_otherFilter"></label>
-      <label>Beneficios: etiqueta<input id="site_benefitEyebrow"></label><label>Beneficios: título<input id="site_benefitTitle"></label>
-      <label class="full">Beneficios: texto<textarea id="site_benefitText"></textarea></label>
-      <label>Beneficio 1<input id="site_benefit1Title"></label><label>Texto 1<input id="site_benefit1Text"></label>
-      <label>Beneficio 2<input id="site_benefit2Title"></label><label>Texto 2<input id="site_benefit2Text"></label>
-      <label>Beneficio 3<input id="site_benefit3Title"></label><label>Texto 3<input id="site_benefit3Text"></label>
-      <label class="full">Pie de página<input id="site_footerText"></label>
+  <details class="accordion" open>
+    <summary><span>🖥️ EDITAR PÁGINA PRINCIPAL</span><span class="kicker">Contenido del index</span></summary>
+    <div class="accordion-body">
+      <p class="section-note">Cada campo aparece cargado con el contenido actual de la página. Modificá lo que necesites y guardá primero como borrador. La vista previa muestra esos cambios sin publicar nada todavía.</p>
+      <div class="site-actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px">
+        <button class="btn" id="importSiteBtn">IMPORTAR site.json</button><button class="btn dark" id="exportSiteBtn">EXPORTAR site.json</button>
+      </div>
+      <input type="file" id="siteJsonFile" accept="application/json,.json" hidden>
+      <details class="accordion" open><summary>Encabezado y navegación</summary><div class="accordion-body"><div class="site-grid">
+        <label>Título de pestaña<input id="site_pageTitle"></label><label>Menú: Shows<input id="site_navShows"></label><label>Menú: Beneficios<input id="site_navBenefits"></label><label>Menú: Contacto<input id="site_navContact"></label>
+      </div></div></details>
+      <details class="accordion"><summary>Hero / portada principal</summary><div class="accordion-body"><div class="site-grid">
+        <label>Etiqueta<input id="site_heroKicker"></label><label>Título<input id="site_heroTitle"></label><label class="full">Texto<textarea id="site_heroText"></textarea></label><label>Texto del buscador<input id="site_searchPlaceholder"></label><label>Botón buscar<input id="site_searchButton"></label><label>Video principal<input id="site_heroVideo" placeholder="assets/videos/Sin_Banderas.mp4"></label><label>Imagen de respaldo<input id="site_heroPoster" placeholder="assets/events/Sin_Banderas.jpg"></label>
+      </div></div></details>
+      <details class="accordion"><summary>Sección de shows</summary><div class="accordion-body"><div class="site-grid">
+        <label>Etiqueta<input id="site_showsEyebrow"></label><label>Título<input id="site_showsTitle"></label><label class="full">Subtítulo<textarea id="site_showsSubtitle"></textarea></label><label>Filtro: Todos<input id="site_allFilter"></label><label>Filtro: Música<input id="site_musicFilter"></label><label>Filtro: Especial<input id="site_specialFilter"></label><label>Filtro: Deporte<input id="site_sportsFilter"></label><label>Filtro: Otros<input id="site_otherFilter"></label>
+      </div></div></details>
+      <details class="accordion"><summary>Beneficios</summary><div class="accordion-body"><div class="site-grid">
+        <label>Etiqueta<input id="site_benefitEyebrow"></label><label>Título<input id="site_benefitTitle"></label><label class="full">Texto<textarea id="site_benefitText"></textarea></label><label>Beneficio 1<input id="site_benefit1Title"></label><label>Texto 1<input id="site_benefit1Text"></label><label>Beneficio 2<input id="site_benefit2Title"></label><label>Texto 2<input id="site_benefit2Text"></label><label>Beneficio 3<input id="site_benefit3Title"></label><label>Texto 3<input id="site_benefit3Text"></label>
+      </div></div></details>
+      <details class="accordion"><summary>Pie de página</summary><div class="accordion-body"><div class="site-grid"><label class="full">Texto del pie<input id="site_footerText"></label></div></div></details>
+      <div class="site-save"><span id="siteStatus">Sin cambios.</span><button class="btn primary" id="saveSiteBtn">GUARDAR BORRADOR</button></div>
     </div>
-    <div class="site-save"><span id="siteStatus">Sin cambios.</span><button class="btn primary" id="saveSiteBtn">GUARDAR CONTENIDO</button></div>
-  </section>
+  </details>
+</section>
 
-  <div class="toolbar">
+<div class="preview-toolbar">
+  <button class="btn primary" id="previewBtn">👁 VISTA PREVIA</button>
+  <button class="btn dark" id="finalSaveBtn">✓ GUARDAR FINALIZADO</button>
+  <span class="preview-note">Borrador = guardado local. Finalizado = descarga los JSON listos para subir a GitHub.</span>
+</div>
+
+<div class="toolbar">
     <button class="btn primary" id="newBtn">+ NUEVO SHOW</button>
-    <button class="btn" id="importBtn">IMPORTAR JSON</button>
+    <button class="btn" id="importBtn">IMPORTAR shows.json</button>
     <button class="btn dark" id="exportBtn">EXPORTAR shows.json</button>
     <button class="btn" id="resetBtn">RECARGAR DEL SITIO</button>
     <input class="search" id="search" type="search" placeholder="Buscar show, ciudad, categoría...">
@@ -223,17 +254,16 @@ textarea{min-height:105px;resize:vertical}
 
   <input type="file" id="jsonFile" accept="application/json,.json" hidden>
 
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Imagen</th><th>Show</th><th>Fecha / lugar</th><th>Estado</th><th>Destacado</th><th>Orden</th><th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-    <div class="empty" id="empty" style="display:none">No hay shows para mostrar.</div>
-  </div>
+  <section class="accordion" id="showsAccordion" open>
+  <details open>
+    <summary><span>🎤 SHOWS</span><span class="kicker">Agregar, editar, publicar y ocultar</span></summary>
+    <div class="accordion-body">
+      <p class="section-note">Cada show tiene su información actual cargada. Abrí uno para ver o modificar todos sus datos. Las imágenes y videos se siguen subiendo manualmente a GitHub; acá solo indicamos sus rutas.</p>
+      <div id="showsList"></div>
+      <div class="empty" id="empty" style="display:none">No hay shows para mostrar.</div>
+    </div>
+  </details>
+</section>
 </main>
 
 <div class="editor" id="editor">
@@ -396,48 +426,19 @@ function saveLocal(){
 
 function render(){
   const term = normalize($('search').value);
-  tbody.innerHTML = '';
-
-  const rows = shows
-    .map((show,index)=>({show,index}))
-    .filter(({show}) => !term || normalize([
-      show.title,show.city,show.venue,show.category,show.date
-    ].join(' ')).includes(term))
-    .sort((a,b)=>(Number(a.show.sortOrder)||999)-(Number(b.show.sortOrder)||999));
-
-  empty.style.display = rows.length ? 'none' : 'block';
-
+  const list = $('showsList'); list.innerHTML='';
+  const rows = shows.map((show,index)=>({show,index})).filter(({show})=>!term || normalize([show.title,show.city,show.venue,show.category,show.date].join(' ')).includes(term)).sort((a,b)=>(Number(a.show.sortOrder)||999)-(Number(b.show.sortOrder)||999));
+  $('empty').style.display = rows.length ? 'none' : 'block';
   rows.forEach(({show,index})=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><img class="thumb" src="../${escapeAttr(show.image||'')}" alt=""></td>
-      <td>
-        <div class="title">${escapeHtml(show.title||'Sin nombre')}</div>
-        <div class="meta">${escapeHtml(show.categoryLabel||show.category||'')}</div>
-      </td>
-      <td>
-        <div>${escapeHtml(show.date||'Sin fecha')}</div>
-        <div class="meta">${escapeHtml([show.city,show.venue].filter(Boolean).join(' • '))}</div>
-      </td>
-      <td><span class="badge ${show.published===false?'off':'on'}">${show.published===false?'Oculto':'Publicado'}</span></td>
-      <td>${show.featured?'<span class="badge featured">Destacado</span>':'—'}</td>
-      <td>${Number(show.sortOrder)||'—'}</td>
-      <td>
-        <div class="actions">
-          <button class="icon-btn" data-edit="${index}">EDITAR</button>
-          <button class="icon-btn" data-toggle="${index}">${show.published===false?'PUBLICAR':'OCULTAR'}</button>
-          <button class="icon-btn" data-delete="${index}">BORRAR</button>
-        </div>
-      </td>
-    `;
-    tbody.appendChild(tr);
+    const card=document.createElement('div'); card.className='show-card';
+    card.innerHTML=`<div class="show-summary" data-open-show="${index}"><img src="../${escapeAttr(show.image||'')}" alt=""><div class="show-main"><div class="show-name">${escapeHtml(show.title||'Sin nombre')}</div><div class="show-meta">${escapeHtml(show.date||'Sin fecha')} • ${escapeHtml([show.city,show.venue].filter(Boolean).join(' • '))}</div></div><div class="show-status"><span class="badge ${show.published===false?'off':'on'}">${show.published===false?'Oculto':'Publicado'}</span>${show.featured?'<span class="badge featured">Destacado</span>':''}<span class="show-chevron">⌄</span></div></div><div class="show-expand"><div class="section-note">Orden ${Number(show.sortOrder)||'—'} · ${escapeHtml(show.categoryLabel||show.category||'')}</div><div class="actions"><button class="btn primary" data-edit="${index}">EDITAR SHOW</button><button class="btn" data-toggle="${index}">${show.published===false?'PUBLICAR':'OCULTAR'}</button><button class="btn danger" data-delete="${index}">BORRAR</button></div></div>`;
+    list.appendChild(card);
+    card.querySelector('[data-open-show]').onclick=()=>card.classList.toggle('open');
   });
-
-  tbody.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openEditor(Number(b.dataset.edit)));
-  tbody.querySelectorAll('[data-toggle]').forEach(b=>b.onclick=()=>togglePublished(Number(b.dataset.toggle)));
-  tbody.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteShow(Number(b.dataset.delete)));
-
-  statusEl.textContent = `${shows.length} ${shows.length===1?'show':'shows'} en el panel`;
+  list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=e=>{e.stopPropagation();openEditor(Number(b.dataset.edit))});
+  list.querySelectorAll('[data-toggle]').forEach(b=>b.onclick=e=>{e.stopPropagation();togglePublished(Number(b.dataset.toggle))});
+  list.querySelectorAll('[data-delete]').forEach(b=>b.onclick=e=>{e.stopPropagation();deleteShow(Number(b.dataset.delete))});
+  statusEl.textContent=`${shows.length} ${shows.length===1?'show':'shows'} en el panel`;
 }
 
 function escapeHtml(value=''){
@@ -614,6 +615,14 @@ document.getElementById('importSiteBtn').onclick=()=>document.getElementById('si
 document.getElementById('siteJsonFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{setSiteForm(JSON.parse(rd.result));saveSiteDraft();alert('site.json importado correctamente.');}catch(err){alert('No se pudo importar: '+err.message)}e.target.value='';};rd.readAsText(f);});
 loadSite();
 
+function saveShowsDraft(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(shows)); statusEl.textContent='Shows guardados como borrador en este navegador.'; }
+function downloadJson(filename,data){ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=filename; a.click(); setTimeout(()=>URL.revokeObjectURL(u),1000); }
+function preparePreview(){ saveShowsDraft(); saveSiteDraft(); localStorage.setItem('sucredito_preview_mode','1'); }
+$('previewBtn').onclick=()=>{ preparePreview(); $('previewModal').classList.add('open'); $('previewFrame').src='../index.html?preview=1&ts='+Date.now(); document.body.style.overflow='hidden'; };
+$('previewClose').onclick=()=>{ $('previewModal').classList.remove('open'); $('previewFrame').src='about:blank'; document.body.style.overflow=''; };
+$('previewModal').addEventListener('click',e=>{if(e.target===$('previewModal')) $('previewClose').click()});
+$('finalSaveBtn').onclick=()=>{ saveShowsDraft(); saveSiteDraft(); downloadJson('shows.json',shows); downloadJson('site.json',collectSite()); alert('Listo. Se descargaron shows.json y site.json. Reemplazalos en la carpeta data de GitHub y hacé COMMIT para publicar los cambios.'); };
+
 async function init(){
   const saved=localStorage.getItem(STORAGE_KEY);
   if(saved){
@@ -634,5 +643,7 @@ async function init(){
 }
 init();
 </script>
+
+<div class="preview-modal" id="previewModal"><div class="preview-window"><div class="preview-window-head"><span>VISTA PREVIA — todavía no está publicado</span><button class="close" id="previewClose" aria-label="Cerrar">×</button></div><iframe id="previewFrame" title="Vista previa del sitio"></iframe></div></div>
 </body>
 </html>
