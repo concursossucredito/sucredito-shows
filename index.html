@@ -273,19 +273,7 @@ h1,h2,h3{margin:0}
   font-weight:900;
   text-transform:uppercase;
 }
-.play-hint{
-  position:absolute;
-  right:13px;
-  bottom:13px;
-  z-index:4;
-  background:rgba(0,0,0,.75);
-  color:white;
-  border-radius:999px;
-  padding:8px 11px;
-  font-size:10px;
-  font-weight:800;
-  backdrop-filter:blur(5px);
-}
+/* El video se descubre con el hover en desktop; no agregamos íconos sobre las placas. */
 .card-body{padding:19px 19px 20px}
 .card-title{
   font-family:"Archivo Black",Impact,sans-serif;
@@ -352,20 +340,30 @@ h1,h2,h3{margin:0}
 .benefit span{font-size:12px;line-height:1.45;color:#4e4e4e}
 
 .footer{
-  background:var(--black);
-  color:white;
-  padding:38px 22px;
+  background:var(--yellow);
+  color:var(--black);
+  padding:30px 22px;
+  border-top:1px solid rgba(0,0,0,.08);
 }
 .footer-inner{
   max-width:1200px;
   margin:auto;
+  min-height:72px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:20px;
+  gap:24px;
 }
-.footer img{width:120px}
-.footer small{color:#aaa}
+.footer img{width:132px;display:block}
+.footer-links{
+  display:flex;
+  gap:24px;
+  margin-left:auto;
+  font-size:13px;
+  font-weight:900;
+}
+.footer-links a:hover{text-decoration:underline}
+.footer small{color:#222;font-size:11px}
 
 .modal{
   position:fixed;
@@ -411,13 +409,18 @@ h1,h2,h3{margin:0}
   display:flex;
   align-items:center;
   justify-content:center;
+  overflow:hidden;
 }
-.modal-media img{
+.modal-media img,
+.modal-media video{
   width:100%;
   height:100%;
   max-height:700px;
-  object-fit:cover;
+  object-fit:contain;
+  background:#111;
+  display:block;
 }
+.modal-media video{display:none}
 .modal-info{padding:48px 42px}
 .modal-info .kicker{margin-bottom:15px}
 .modal-info h2{
@@ -485,17 +488,14 @@ h1,h2,h3{margin:0}
   .modal-box{border-radius:22px;max-height:95vh}
   .modal-content{grid-template-columns:1fr}
   .modal-media{min-height:330px;max-height:48vh}
-  .modal-media img{object-fit:cover}
+  .modal-media img,.modal-media video{object-fit:contain}
   .modal-info{padding:28px 22px 30px}
   .modal-info h2{font-size:40px}
 }
 @media (hover:none){
-  .play-hint{display:block}
+  /* En móvil el video se reproduce dentro de la ventana de detalle. */
 }
-@media (hover:hover){
-  .card .play-hint{opacity:0;transition:opacity .2s}
-  .card:hover .play-hint{opacity:1}
-}
+
 </style>
 </head>
 
@@ -527,7 +527,8 @@ h1,h2,h3{margin:0}
     </div>
 
     <div class="hero-video" aria-label="Video destacado">
-      <video autoplay muted loop playsinline preload="metadata">
+      <video id="heroVideo" autoplay muted loop playsinline preload="auto"
+             poster="assets/events/Sin_Banderas.jpg">
         <source src="assets/videos/Sin_Banderas.mp4" type="video/mp4">
       </video>
     </div>
@@ -549,104 +550,7 @@ h1,h2,h3{margin:0}
     <button class="filter" data-filter="especial">Especiales</button>
   </div>
 
-  <div class="shows-grid" id="showsGrid">
-
-    <article class="card" data-category="musica" data-search="sin bandera sin banderas musica" 
-      data-title="Sin Bandera" data-image="assets/events/Sin_Banderas.jpg"
-      data-video="assets/videos/Sin_Banderas.mp4"
-      data-date="Próximamente" data-city="Próximamente" data-venue="Próximamente"
-      data-description="Viví el show de Sin Bandera y disfrutá una experiencia especial con Sucrédito."
-      data-benefit="Beneficios Sucrédito disponibles próximamente.">
-      <div class="card-media">
-        <img src="assets/events/Sin_Banderas.jpg" alt="Sin Bandera" loading="lazy">
-        <video muted playsinline preload="metadata"></video>
-        <span class="card-tag">Música</span>
-        <span class="play-hint">▶ Ver video</span>
-      </div>
-      <div class="card-body">
-        <div class="card-title">Sin Bandera</div>
-        <div class="card-meta">Show • Sucrédito</div>
-        <div class="card-cta"><span>Ver detalles</span><span class="arrow">→</span></div>
-      </div>
-    </article>
-
-    <article class="card" data-category="musica" data-search="la mona mona jimenez cuarteto musica"
-      data-title="La Mona Jiménez" data-image="assets/events/Mona.jpg"
-      data-video="assets/videos/Mona_Jimenez.mp4"
-      data-date="Próximamente" data-city="Próximamente" data-venue="Próximamente"
-      data-description="La Mona Jiménez llega con toda su energía. Descubrí la propuesta de Sucrédito."
-      data-benefit="Beneficios Sucrédito disponibles próximamente.">
-      <div class="card-media">
-        <img src="assets/events/Mona.jpg" alt="La Mona Jiménez" loading="lazy">
-        <video muted playsinline preload="metadata"></video>
-        <span class="card-tag">Música</span>
-        <span class="play-hint">▶ Ver video</span>
-      </div>
-      <div class="card-body">
-        <div class="card-title">La Mona Jiménez</div>
-        <div class="card-meta">Show • Sucrédito</div>
-        <div class="card-cta"><span>Ver detalles</span><span class="arrow">→</span></div>
-      </div>
-    </article>
-
-    <article class="card" data-category="especial" data-search="despedida pulga rodriguez futbol especial"
-      data-title="Despedida de La Pulga Rodríguez" data-image="assets/events/Despedida_Pulga.jpg"
-      data-video="assets/videos/Despedida_Pulga.mp4"
-      data-date="Próximamente" data-city="Próximamente" data-venue="Próximamente"
-      data-description="Una despedida para vivirla en grande. Conocé todos los detalles cuando sean publicados."
-      data-benefit="Beneficios Sucrédito disponibles próximamente.">
-      <div class="card-media">
-        <img src="assets/events/Despedida_Pulga.jpg" alt="Despedida de La Pulga Rodríguez" loading="lazy">
-        <video muted playsinline preload="metadata"></video>
-        <span class="card-tag">Especial</span>
-        <span class="play-hint">▶ Ver video</span>
-      </div>
-      <div class="card-body">
-        <div class="card-title">Despedida de La Pulga Rodríguez</div>
-        <div class="card-meta">Evento especial • Sucrédito</div>
-        <div class="card-cta"><span>Ver detalles</span><span class="arrow">→</span></div>
-      </div>
-    </article>
-
-    <article class="card" data-category="musica" data-search="jesse joy jeese joy jesse and joy musica"
-      data-title="Jesse & Joy" data-image="assets/events/Jeese_&_Joy.jpg"
-      data-video="assets/videos/Jesse_&_Joy.mp4"
-      data-date="Próximamente" data-city="Próximamente" data-venue="Próximamente"
-      data-description="Jesse & Joy en una experiencia para disfrutar con Sucrédito."
-      data-benefit="Beneficios Sucrédito disponibles próximamente.">
-      <div class="card-media">
-        <img src="assets/events/Jeese_&_Joy.jpg" alt="Jesse & Joy" loading="lazy">
-        <video muted playsinline preload="metadata"></video>
-        <span class="card-tag">Música</span>
-        <span class="play-hint">▶ Ver video</span>
-      </div>
-      <div class="card-body">
-        <div class="card-title">Jesse & Joy</div>
-        <div class="card-meta">Show • Sucrédito</div>
-        <div class="card-cta"><span>Ver detalles</span><span class="arrow">→</span></div>
-      </div>
-    </article>
-
-    <article class="card" data-category="musica" data-search="fundamentalistas fundamentalistas del aire acondicionado musica"
-      data-title="Los Fundamentalistas" data-image="assets/events/Fundamentalistas.jpg"
-      data-video="assets/videos/Fundamentalistas.mp4"
-      data-date="10 de octubre de 2026" data-city="Tucumán" data-venue="Hipódromo de Tucumán"
-      data-description="Los Fundamentalistas del Aire Acondicionado. Consultá la información del show y las opciones disponibles con Sucrédito."
-      data-benefit="Consultá condiciones y beneficios vigentes de Sucrédito.">
-      <div class="card-media">
-        <img src="assets/events/Fundamentalistas.jpg" alt="Los Fundamentalistas" loading="lazy">
-        <video muted playsinline preload="metadata"></video>
-        <span class="card-tag">Música</span>
-        <span class="play-hint">▶ Ver video</span>
-      </div>
-      <div class="card-body">
-        <div class="card-title">Los Fundamentalistas</div>
-        <div class="card-meta">10/10/2026 • Tucumán</div>
-        <div class="card-cta"><span>Ver detalles</span><span class="arrow">→</span></div>
-      </div>
-    </article>
-
-  </div>
+  <div class="shows-grid" id="showsGrid"></div>
 
   <div class="empty" id="empty">No encontramos shows con esa búsqueda.</div>
 </section>
@@ -670,6 +574,10 @@ h1,h2,h3{margin:0}
 <footer class="footer">
   <div class="footer-inner">
     <img src="assets/logo.png" alt="Sucrédito">
+    <div class="footer-links">
+      <a href="#shows">SHOWS</a>
+      <a href="#beneficios">BENEFICIOS</a>
+    </div>
     <small>© Sucrédito · Shows y experiencias</small>
   </div>
 </footer>
@@ -680,6 +588,7 @@ h1,h2,h3{margin:0}
     <div class="modal-content">
       <div class="modal-media">
         <img id="modalImage" src="" alt="">
+        <video id="modalVideo" muted playsinline controls preload="metadata"></video>
       </div>
       <div class="modal-info">
         <span class="kicker">Sucrédito presenta</span>
@@ -698,90 +607,170 @@ h1,h2,h3{margin:0}
 </div>
 
 <script>
-const cards = [...document.querySelectorAll('.card')];
+/*
+  DATOS:
+  Se cargan desde data/shows.json.
+  Ahí vamos a poner fecha, ciudad, lugar, descripción, beneficio y link real
+  de compra cuando me pases la información.
+*/
+
+document.documentElement.style.scrollBehavior = 'smooth';
+
+/* Evita que el navegador móvil vuelva a abrir la página a mitad de scroll. */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+window.addEventListener('pageshow', () => {
+  if (!location.hash) window.scrollTo(0, 0);
+});
+
+const grid = document.getElementById('showsGrid');
 const filters = [...document.querySelectorAll('.filter')];
 const searchInput = document.getElementById('searchInput');
 const resultCount = document.getElementById('resultCount');
 const empty = document.getElementById('empty');
 
+let shows = [];
 let activeFilter = 'all';
 let currentVideoCard = null;
 
-function setPlaying(card, playing){
-  const video = card.querySelector('video');
-  if(playing){
-    if(!video.src){
-      video.src = card.dataset.video;
-      video.load();
-    }
-    cards.forEach(other => {
-      if(other !== card) stopCard(other);
-    });
-    currentVideoCard = card;
-    card.classList.add('playing');
-    video.currentTime = 0;
-    const p = video.play();
-    if(p) p.catch(() => {});
-  }else{
-    stopCard(card);
-  }
+const modal = document.getElementById('modal');
+const modalImage = document.getElementById('modalImage');
+const modalVideo = document.getElementById('modalVideo');
+const modalTitle = document.getElementById('modalTitle');
+const modalDescription = document.getElementById('modalDescription');
+const modalDate = document.getElementById('modalDate');
+const modalCity = document.getElementById('modalCity');
+const modalVenue = document.getElementById('modalVenue');
+const modalBenefit = document.getElementById('modalBenefit');
+const modalButton = document.querySelector('.modal-button');
+
+function normalize(text=''){
+  return text.toString().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 }
 
-function stopCard(card){
-  const video = card.querySelector('video');
+function escapeHtml(value=''){
+  return value.toString()
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#039;");
+}
+
+function renderShows(){
+  grid.innerHTML = '';
+
+  shows.forEach((show, index) => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.dataset.index = index;
+    card.dataset.category = show.category || 'musica';
+    card.dataset.search = normalize([
+      show.title, show.category, show.city, show.venue, show.description
+    ].join(' '));
+    card.tabIndex = 0;
+
+    card.innerHTML = `
+      <div class="card-media">
+        <img src="${escapeHtml(show.image)}" alt="${escapeHtml(show.title)}" loading="lazy">
+        <video muted playsinline preload="metadata"></video>
+        <span class="card-tag">${escapeHtml(show.categoryLabel || show.category || 'Show')}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${escapeHtml(show.title)}</div>
+        <div class="card-meta">${escapeHtml(show.shortMeta || 'Show • Sucrédito')}</div>
+        <div class="card-cta">
+          <span>Ver detalles</span>
+          <span class="arrow">→</span>
+        </div>
+      </div>
+    `;
+
+    const video = card.querySelector('video');
+
+    card.addEventListener('mouseenter', () => {
+      if (window.matchMedia('(hover: hover)').matches) startPreview(card, show, video);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      if (window.matchMedia('(hover: hover)').matches) stopPreview(card, video);
+    });
+
+    card.addEventListener('click', () => openModal(show, card));
+
+    card.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openModal(show, card);
+      }
+    });
+
+    grid.appendChild(card);
+  });
+
+  applyFilters();
+}
+
+function startPreview(card, show, video){
+  if (!show.video) return;
+
+  document.querySelectorAll('.card').forEach(other => {
+    if (other !== card) {
+      const otherVideo = other.querySelector('video');
+      stopPreview(other, otherVideo);
+    }
+  });
+
+  if (!video.src) {
+    video.src = show.video;
+    video.load();
+  }
+
+  card.classList.add('playing');
+  currentVideoCard = card;
+  video.currentTime = 0;
+
+  const promise = video.play();
+  if (promise) promise.catch(() => {
+    /* Si el navegador bloquea el autoplay, la placa sigue visible. */
+    card.classList.remove('playing');
+  });
+
+  video.onended = () => stopPreview(card, video);
+}
+
+function stopPreview(card, video){
+  if (!video) return;
   card.classList.remove('playing');
   video.pause();
-  try{ video.currentTime = 0; }catch(e){}
-  if(currentVideoCard === card) currentVideoCard = null;
+  try { video.currentTime = 0; } catch(e) {}
+  if (currentVideoCard === card) currentVideoCard = null;
 }
 
-cards.forEach(card => {
-  const video = card.querySelector('video');
-
-  video.addEventListener('ended', () => stopCard(card));
-
-  card.addEventListener('mouseenter', () => {
-    if(window.matchMedia('(hover: hover)').matches) setPlaying(card, true);
-  });
-
-  card.addEventListener('mouseleave', () => {
-    if(window.matchMedia('(hover: hover)').matches) stopCard(card);
-  });
-
-  card.addEventListener('click', () => openModal(card));
-
-  card.addEventListener('keydown', e => {
-    if(e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openModal(card);
-    }
-  });
-
-  card.setAttribute('tabindex','0');
-});
-
 function applyFilters(){
-  const term = searchInput.value.trim().toLowerCase();
+  const term = normalize(searchInput.value.trim());
   let visible = 0;
 
-  cards.forEach(card => {
+  [...grid.querySelectorAll('.card')].forEach(card => {
     const matchesFilter = activeFilter === 'all' || card.dataset.category === activeFilter;
-    const matchesSearch = !term || card.dataset.search.includes(term) || card.dataset.title.toLowerCase().includes(term);
+    const matchesSearch = !term || card.dataset.search.includes(term);
     const show = matchesFilter && matchesSearch;
+
     card.classList.toggle('hidden', !show);
-    if(!show) stopCard(card);
-    if(show) visible++;
+    if (!show) stopPreview(card, card.querySelector('video'));
+    if (show) visible++;
   });
 
   resultCount.textContent = `${visible} ${visible === 1 ? 'show' : 'shows'}`;
   empty.style.display = visible ? 'none' : 'block';
 }
 
-filters.forEach(btn => {
-  btn.addEventListener('click', () => {
+filters.forEach(button => {
+  button.addEventListener('click', () => {
     filters.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeFilter = btn.dataset.filter;
+    button.classList.add('active');
+    activeFilter = button.dataset.filter;
     applyFilters();
   });
 });
@@ -789,46 +778,95 @@ filters.forEach(btn => {
 searchInput.addEventListener('input', applyFilters);
 document.getElementById('searchBtn').addEventListener('click', applyFilters);
 
-const modal = document.getElementById('modal');
-const modalImage = document.getElementById('modalImage');
-const modalTitle = document.getElementById('modalTitle');
-const modalDescription = document.getElementById('modalDescription');
-const modalDate = document.getElementById('modalDate');
-const modalCity = document.getElementById('modalCity');
-const modalVenue = document.getElementById('modalVenue');
-const modalBenefit = document.getElementById('modalBenefit');
+function openModal(show, card){
+  stopPreview(card, card.querySelector('video'));
 
-function openModal(card){
-  stopCard(card);
-  modalImage.src = card.dataset.image;
-  modalImage.alt = card.dataset.title;
-  modalTitle.textContent = card.dataset.title;
-  modalDescription.textContent = card.dataset.description;
-  modalDate.textContent = card.dataset.date;
-  modalCity.textContent = card.dataset.city;
-  modalVenue.textContent = card.dataset.venue;
-  modalBenefit.textContent = card.dataset.benefit;
+  modalImage.src = show.image;
+  modalImage.alt = show.title;
+
+  modalTitle.textContent = show.title;
+  modalDescription.textContent = show.description || '';
+  modalDate.textContent = show.date || 'Próximamente';
+  modalCity.textContent = show.city || 'Próximamente';
+  modalVenue.textContent = show.venue || 'Próximamente';
+  modalBenefit.textContent = show.benefit || 'Consultar condiciones vigentes.';
+
+  /* Si existe video, la ventana muestra el video y trata de reproducirlo en mute.
+     Si el navegador no permite autoplay, quedan visibles los controles para tocar Play. */
+  modalVideo.pause();
+  modalVideo.removeAttribute('src');
+  modalVideo.style.display = 'none';
+  modalImage.style.display = 'block';
+
+  if (show.video) {
+    modalVideo.src = show.video;
+    modalVideo.style.display = 'block';
+    modalImage.style.display = 'none';
+    modalVideo.load();
+
+    const p = modalVideo.play();
+    if (p) {
+      p.catch(() => {
+        modalVideo.controls = true;
+      });
+    }
+  }
+
+  if (show.purchaseUrl) {
+    modalButton.classList.remove('disabled');
+    modalButton.textContent = 'COMPRAR / VER EVENTO';
+    modalButton.onclick = () => window.open(show.purchaseUrl, '_blank', 'noopener,noreferrer');
+  } else {
+    modalButton.classList.add('disabled');
+    modalButton.textContent = 'Información próximamente';
+    modalButton.onclick = null;
+  }
+
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
   document.getElementById('modalClose').focus();
 }
 
 function closeModal(){
+  modalVideo.pause();
+  modalVideo.removeAttribute('src');
   modal.classList.remove('open');
   document.body.style.overflow = '';
 }
 
 document.getElementById('modalClose').addEventListener('click', closeModal);
 
-modal.addEventListener('click', e => {
-  if(e.target === modal) closeModal();
+modal.addEventListener('click', event => {
+  if (event.target === modal) closeModal();
 });
 
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && modal.classList.contains('open')) closeModal();
 });
 
-applyFilters();
+/* Video principal: si el MP4 tarda o falla, la imagen poster sigue funcionando. */
+const heroVideo = document.getElementById('heroVideo');
+if (heroVideo) {
+  heroVideo.addEventListener('error', () => {
+    heroVideo.style.opacity = '0';
+  });
+}
+
+/* Carga de datos externa. */
+fetch('data/shows.json', { cache: 'no-store' })
+  .then(response => {
+    if (!response.ok) throw new Error('No se pudo cargar data/shows.json');
+    return response.json();
+  })
+  .then(data => {
+    shows = Array.isArray(data) ? data : [];
+    renderShows();
+  })
+  .catch(error => {
+    console.error(error);
+    shows = [];
+    renderShows();
+  });
 </script>
 
 <!-- Cloudflare Web Analytics: pegá acá el script de tu propiedad, si querés medir esta página -->
