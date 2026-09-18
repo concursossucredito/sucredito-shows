@@ -25,6 +25,7 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
+html.no-smooth{scroll-behavior:auto!important}
 body{
   margin:0;
   background:var(--paper);
@@ -135,6 +136,9 @@ h1,h2,h3{margin:0}
   color:var(--ink);
 }
 .search button{
+  color:var(--ink);
+  -webkit-appearance:none;
+  appearance:none;
   border:0;
   background:var(--yellow);
   color:var(--black);
@@ -205,6 +209,9 @@ h1,h2,h3{margin:0}
   margin-bottom:26px;
 }
 .filter{
+  -webkit-appearance:none;
+  appearance:none;
+  color:var(--ink);
   border:1px solid #d9d9d4;
   background:white;
   border-radius:999px;
@@ -213,6 +220,7 @@ h1,h2,h3{margin:0}
   font-weight:800;
 }
 .filter.active,.filter:hover{
+  color:var(--ink);
   background:var(--yellow);
   border-color:var(--yellow);
 }
@@ -472,7 +480,10 @@ h1,h2,h3{margin:0}
   .hero h1{font-size:46px}
   .hero p{font-size:15px}
   .search{border-radius:14px}
-  .search button{padding:13px 14px}
+  .search button{
+  color:var(--ink);
+  -webkit-appearance:none;
+  appearance:none;padding:13px 14px}
   .section{padding:52px 16px}
   .section-head{align-items:start;flex-direction:column}
   .shows-grid{grid-template-columns:1fr 1fr;gap:12px}
@@ -614,7 +625,7 @@ h1,h2,h3{margin:0}
     <div class="modal-content">
       <div class="modal-media">
         <img id="modalImage" src="" alt="">
-        <video id="modalVideo" muted playsinline controls preload="metadata"></video>
+        <video id="modalVideo" playsinline preload="metadata"></video>
       </div>
       <div class="modal-info">
         <span class="kicker" id="modalKicker">Sucrédito presenta</span>
@@ -640,14 +651,35 @@ h1,h2,h3{margin:0}
   de compra cuando me pases la información.
 */
 
-document.documentElement.style.scrollBehavior = 'smooth';
-
-/* Evita que el navegador móvil vuelva a abrir la página a mitad de scroll. */
+/*
+  Posición inicial: la página siempre abre arriba cuando no hay un ancla (#shows,
+  #beneficios, etc.). Algunos navegadores móviles restauran el scroll después de
+  que la página termina de cargar, por eso hacemos el reset en varios momentos.
+*/
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-window.addEventListener('pageshow', () => {
-  if (!location.hash) window.scrollTo(0, 0);
-});
+function forceTopOnInitialLoad(){
+  if (location.hash) return;
+
+  document.documentElement.classList.add('no-smooth');
+  document.body.classList.add('no-smooth');
+
+  window.scrollTo(0, 0);
+
+  requestAnimationFrame(() => {
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
+  });
+
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.classList.remove('no-smooth');
+    document.body.classList.remove('no-smooth');
+  }, 250);
+}
+
+window.addEventListener('load', forceTopOnInitialLoad);
+window.addEventListener('pageshow', forceTopOnInitialLoad);
 
 const grid = document.getElementById('showsGrid');
 const filters = [...document.querySelectorAll('.filter')];
@@ -835,10 +867,14 @@ function openModal(show, card){
     modalImage.style.display = 'none';
     modalVideo.load();
 
+    /* El modal se abre por una acción del usuario. Intentamos reproducir con sonido.
+       No mostramos los controles nativos para mantener el diseño limpio. */
+    modalVideo.muted = false;
     const p = modalVideo.play();
     if (p) {
       p.catch(() => {
-        modalVideo.controls = true;
+        /* Algunos navegadores pueden bloquear audio automático.
+           Dejamos el video sin controles para conservar el diseño. */
       });
     }
   }
