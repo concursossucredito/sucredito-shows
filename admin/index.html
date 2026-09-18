@@ -685,18 +685,53 @@ loadSite();
 
 function saveShowsDraft(){localStorage.setItem(STORAGE_KEY,JSON.stringify(shows));statusEl.textContent='Shows guardados como borrador en este navegador.';}
 function downloadJson(filename,data){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);}
-function preparePreview(){saveShowsDraft();saveSiteDraft();}
-$('saveAllDraftBtn').onclick=()=>{saveShowsDraft();saveSiteDraft();alert('Borrador guardado en este navegador. Ahora podés abrir Vista Previa.');};
+let previewState = null;
+
+function preparePreview(){
+  const currentShows = JSON.parse(JSON.stringify(shows));
+  const currentSite = collectSite();
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(currentShows));
+  localStorage.setItem(SITE_STORAGE_KEY, JSON.stringify(currentSite));
+
+  previewState = { shows: currentShows, site: currentSite };
+}
+
+function sendPreviewState(){
+  if(!previewState) return;
+  const frame = $('previewFrame');
+  if(frame && frame.contentWindow){
+    frame.contentWindow.postMessage(
+      { type:'SUCRÉDITO_PREVIEW_STATE', shows:previewState.shows, site:previewState.site },
+      location.origin
+    );
+  }
+}
+
+$('saveAllDraftBtn').onclick=()=>{
+  preparePreview();
+  alert('Borrador guardado en este navegador. Ahora podés abrir Vista Previa.');
+};
+
 $('previewBtn').onclick=()=>{
   preparePreview();
-  $('previewModal').classList.add('open'); document.body.style.overflow='hidden';
-  const url='../index.html?preview=1&ts='+Date.now();
-  $('previewFrame').src=url;
+  $('previewModal').classList.add('open');
+  document.body.style.overflow='hidden';
+  $('previewFrame').src='../index.html?preview=1&ts='+Date.now();
 };
-function closePreview(){ $('previewModal').classList.remove('open'); $('previewFrame').src='about:blank'; document.body.style.overflow=''; }
+
+$('previewFrame').addEventListener('load', sendPreviewState);
+
+function closePreview(){
+  $('previewModal').classList.remove('open');
+  $('previewFrame').src='about:blank';
+  document.body.style.overflow='';
+  previewState=null;
+}
+
 $('previewClose').onclick=closePreview;
 $('previewModal').addEventListener('click',e=>{if(e.target===$('previewModal'))closePreview()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('previewModal').classList.contains('open'))closePreview();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('previewModal').classList.contains('open'))closePreview()});
 $('finalSaveBtn').onclick=()=>{saveShowsDraft();saveSiteDraft();downloadJson('shows.json',shows);downloadJson('site.json',collectSite());alert('Listo. Se descargaron shows.json y site.json. Reemplazalos en la carpeta data de GitHub y hacé COMMIT para publicar los cambios.');};
 
 // Show fields: keep current data and add styling controls.
@@ -712,8 +747,27 @@ collect=function(){const s=originalCollect();s.emoji=$('emoji').value.trim();s.t
 
 async function init(){
   const saved=localStorage.getItem(STORAGE_KEY);
-  if(saved){try{shows=JSON.parse(saved);render();return;}catch(e){}}
-  try{const r=await fetch('../data/shows.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const data=await r.json();shows=Array.isArray(data)?data:SHOW_DEFAULTS;}catch(e){shows=SHOW_DEFAULTS.map(x=>({...x}));}
+
+  if(saved){
+    try{
+      const parsed=JSON.parse(saved);
+      if(Array.isArray(parsed) && parsed.length){
+        shows=parsed;
+        render();
+        return;
+      }
+    }catch(e){}
+  }
+
+  try{
+    const r=await fetch('../data/shows.json?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('No se pudo leer data/shows.json');
+    const data=await r.json();
+    shows=Array.isArray(data)?data:SHOW_DEFAULTS.map(x=>({...x}));
+  }catch(e){
+    shows=SHOW_DEFAULTS.map(x=>({...x}));
+  }
+
   render();
 }
 init();
