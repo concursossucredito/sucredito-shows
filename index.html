@@ -899,8 +899,8 @@ h1,h2,h3{margin:0}
         <h2 id="modalTitle"></h2>
         <p id="modalDescription"></p>
         <div class="details">
-          <div class="detail"><b>Fecha</b><span id="modalDate"></span></div>
-          <div class="detail" id="modalTimeWrap"><b>Hora</b><span id="modalTime"></span></div>
+          <div class="detail"><b>Fecha del evento</b><span id="modalDate"></span></div>
+          <div class="detail" id="modalTimeWrap"><b>Horario</b><span id="modalTime"></span></div>
           <div class="detail"><b>Ciudad</b><span id="modalCity"></span></div>
           <div class="detail"><b>Lugar</b><span id="modalVenue"></span></div>
           <div class="detail"><b>Beneficio</b><span id="modalBenefit"></span></div>
@@ -925,7 +925,7 @@ h1,h2,h3{margin:0}
         </div>
         <div class="modal-map" id="modalMap" style="display:none;">
           <div class="modal-map-head">
-            <div class="modal-map-title">📍 Ubicación</div>
+            <div class="modal-map-title">📍 Dónde es</div>
             <div class="modal-map-address" id="modalMapAddress"></div>
           </div>
           <iframe id="modalMapFrame" title="Mapa de ubicación del espectáculo" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -942,10 +942,14 @@ h1,h2,h3{margin:0}
 
 <script>
 /*
-  DATOS:
-  Se cargan desde data/shows.json.
-  Ahí vamos a poner fecha, ciudad, lugar, descripción, beneficio y link real
-  de compra cuando me pases la información.
+  DATOS POR SHOW (preparado para el Admin):
+  - date: texto visible de la fecha
+  - time: texto visible del horario / apertura de puertas
+  - eventDateTime: ISO 8601 con fecha + hora del evento -> activa el contador
+  - city, venue, address: ubicación visible
+  - mapLat, mapLng: coordenadas del mapa -> activa el mapa integrado
+  - mapUrl: URL de Google Maps -> se usa en "ABRIR EN GOOGLE MAPS"
+  - purchaseUrl: link de compra -> activa el botón de entradas
 */
 
 /* Navegación y posición inicial: evita que Safari/WhatsApp restaure el scroll anterior. */
@@ -1171,21 +1175,31 @@ function renderCountdown(show){
   stopCountdown();
   if(!modalCountdown) return;
 
-  const target = Date.parse(show.eventDateTime || '');
-  if(!Number.isFinite(target) || target <= Date.now()){
+  const rawTarget = show.eventDateTime || '';
+  const target = Date.parse(rawTarget);
+
+  if(!Number.isFinite(target)){
     modalCountdown.style.display = 'none';
     return;
   }
 
   modalCountdown.style.display = '';
+  const label = modalCountdown.querySelector('.modal-countdown-label');
 
   const update = () => {
     const diff = target - Date.now();
+
     if(diff <= 0){
       stopCountdown();
-      modalCountdown.style.display = 'none';
+      if(label) label.textContent = 'El show ya comenzó';
+      countDays.textContent = '00';
+      countHours.textContent = '00';
+      countMinutes.textContent = '00';
+      countSeconds.textContent = '00';
       return;
     }
+
+    if(label) label.textContent = 'Falta para el show';
 
     const totalSeconds = Math.floor(diff / 1000);
     const days = Math.floor(totalSeconds / 86400);
@@ -1215,24 +1229,25 @@ function renderModalMap(show){
   const lat = Number(show.mapLat);
   const lng = Number(show.mapLng);
   const hasCoords = Number.isFinite(lat) && Number.isFinite(lng);
-  const mapsUrl = mapsUrlFor(show);
+  const mapsUrl = show.mapUrl || mapsUrlFor(show);
 
   modalMapFrame.src = 'about:blank';
   modalMapAddress.textContent = '';
   modalMapOpen.href = mapsUrl || '#';
+  modalMapOpen.style.display = mapsUrl ? '' : 'none';
 
   if(!hasCoords){
     modalMap.style.display = 'none';
     return;
   }
 
-  const pad = 0.0048;
+  // OpenStreetMap: free map embed. The Google Maps URL remains the action link for exact navigation.
+  const pad = Number(show.mapZoomPad) || 0.0048;
   const bbox = [lng-pad, lat-pad, lng+pad, lat+pad].join(',');
   const embedUrl = 'https://www.openstreetmap.org/export/embed.html?bbox=' + encodeURIComponent(bbox) + '&layer=mapnik&marker=' + encodeURIComponent(lat + ',' + lng);
 
   modalMapFrame.src = embedUrl;
   modalMapAddress.textContent = show.address || [show.venue, show.city].filter(Boolean).join(', ');
-  modalMapOpen.style.display = mapsUrl ? '' : 'none';
   modalMap.style.display = '';
 }
 
@@ -1338,7 +1353,7 @@ if (heroVideo) {
 
 /* V10: carga robusta de datos + modo vista previa. */
 const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
-const SEED_SHOWS = [{"title":"Sin Bandera","image":"assets/events/Sin_Banderas.jpg","video":"assets/videos/Sin_Banderas.mp4","category":"musica","categoryLabel":"Música","shortMeta":"Show • Sucrédito","date":"Próximamente","city":"Próximamente","venue":"Próximamente","description":"Viví el show de Sin Bandera y disfrutá una experiencia especial con Sucrédito.","benefit":"Beneficios Sucrédito disponibles próximamente.","purchaseUrl":"","id":"show-1","featured":true,"published":true,"sortOrder":1,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black"},{"title":"La Mona Jiménez","image":"assets/events/Mona.jpg","video":"assets/videos/Mona_Jimenez.mp4","category":"musica","categoryLabel":"Música","shortMeta":"25/10/2026 • Tucumán","date":"Domingo 25 de octubre de 2026","city":"San Miguel de Tucumán","venue":"Palacio de los Deportes","description":"25 de Octubre, 20 hs\nLa Mona llega nuevamente a Tucumán!\n\nEntrada General\n4 cuotas sin interés con tarjeta Sucrédito","benefit":"Entrada General · 4 cuotas sin interés con tarjeta Sucrédito","purchaseUrl":"https://universotickets.com/event_detail/?id=44","id":"show-2","featured":true,"published":true,"sortOrder":2,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black","time":"Apertura de puertas 20:00 h","eventDateTime":"2026-10-25T20:00:00-03:00","transport":"Líneas que llegan: 102, 100, 118"},{"title":"Despedida de La Pulga Rodríguez","image":"assets/events/Despedida_Pulga.jpg","video":"assets/videos/Despedida_Pulga.mp4","category":"especial","categoryLabel":"Especial","shortMeta":"Evento especial • Sucrédito","date":"Próximamente","city":"San Miguel de Tucumán","venue":"Estadio Monumental José Fierro","description":"Una despedida para vivirla en grande. Conocé todos los detalles cuando sean publicados.","benefit":"Beneficios Sucrédito disponibles próximamente.","purchaseUrl":"","id":"show-3","featured":false,"published":true,"sortOrder":3,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black","address":"25 de Mayo 1351","mapLat":-26.81278,"mapLng":-65.19917},{"title":"Jesse & Joy","image":"assets/events/Jeese_&_Joy.jpg","video":"assets/videos/Jesse_&_Joy.mp4","category":"musica","categoryLabel":"Música","shortMeta":"Show • Sucrédito","date":"Próximamente","city":"Próximamente","venue":"Próximamente","description":"Jesse & Joy en una experiencia para disfrutar con Sucrédito.","benefit":"Beneficios Sucrédito disponibles próximamente.","purchaseUrl":"","id":"show-4","featured":false,"published":true,"sortOrder":4,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black"},{"title":"Los Fundamentalistas","image":"assets/events/Fundamentalistas.jpg","video":"assets/videos/Fundamentalistas.mp4","category":"musica","categoryLabel":"Música","shortMeta":"10/10/2026 • Tucumán","date":"10 de octubre de 2026","city":"Tucumán","venue":"Hipódromo de Tucumán","description":"Los Fundamentalistas del Aire Acondicionado. Consultá la información del show y las opciones disponibles con Sucrédito.","benefit":"Consultá condiciones y beneficios vigentes de Sucrédito.","purchaseUrl":"","id":"show-5","featured":false,"published":true,"sortOrder":5,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black"}];
+const SEED_SHOWS = [{"title":"Sin Bandera","image":"assets/events/Sin_Banderas.jpg","video":"assets/videos/Sin_Banderas.mp4","category":"musica","categoryLabel":"Música","shortMeta":"23/02/2027 • Tucumán","date":"Martes 23 de febrero de 2027","city":"San Miguel de Tucumán","venue":"Palacio de los Deportes","description":"Sin Bandera se presenta en Tucumán en el marco de su gira internacional Escenas Tour. Una noche para disfrutar sus clásicos y nuevas canciones.","benefit":"Entradas disponibles online a través de Entrada Uno.","purchaseUrl":"https://www.entradauno.com/","id":"show-1","featured":true,"published":true,"sortOrder":1,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black","time":"21:00 h","eventDateTime":"2027-02-23T21:00:00-03:00","address":"Av. Coronel Suárez, San Miguel de Tucumán, Tucumán","mapLat":-26.8317,"mapLng":-65.1812,"mapUrl":"https://www.google.com/maps/place/palacio+de+los+deportes+tucuman/data=!4m2!3m1!1s0x94225eae50a6d3b3:0x3270e62bbbd3d647?sa=X&ved=1t:242&ictx=111","transport":"Acceso por transporte público en la zona del Parque 9 de Julio."},{"title":"La Mona Jiménez","image":"assets/events/Mona.jpg","video":"assets/videos/Mona_Jimenez.mp4","category":"musica","categoryLabel":"Música","shortMeta":"25/10/2026 • Tucumán","date":"Domingo 25 de octubre de 2026","city":"San Miguel de Tucumán","venue":"Palacio de los Deportes","description":"25 de Octubre, 20 hs\nLa Mona llega nuevamente a Tucumán!\n\nEntrada General\n4 cuotas sin interés con tarjeta Sucrédito","benefit":"Entrada General · 4 cuotas sin interés con tarjeta Sucrédito","purchaseUrl":"https://universotickets.com/event_detail/?id=44","id":"show-2","featured":true,"published":true,"sortOrder":2,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black","time":"Apertura de puertas 20:00 h","eventDateTime":"2026-10-25T20:00:00-03:00","transport":"Líneas que llegan: 102, 100, 118","address":"Av. Coronel Suárez, San Miguel de Tucumán, Tucumán","mapLat":-26.8317,"mapLng":-65.1812,"mapUrl":"https://www.google.com/maps/place/palacio+de+los+deportes+tucuman/data=!4m2!3m1!1s0x94225eae50a6d3b3:0x3270e62bbbd3d647?sa=X&ved=1t:242&ictx=111"},{"title":"Despedida de La Pulga Rodríguez","image":"assets/events/Despedida_Pulga.jpg","video":"assets/videos/Despedida_Pulga.mp4","category":"especial","categoryLabel":"Especial","shortMeta":"26/09/2026 • Tucumán","date":"Sábado 26 de septiembre de 2026","city":"San Miguel de Tucumán","venue":"Estadio Monumental José Fierro","description":"El partido despedida de La Pulga Rodríguez se realizará en el Monumental José Fierro, en una jornada especial junto al pueblo decano.","benefit":"Evento especial Sucrédito.","purchaseUrl":"","id":"show-3","featured":false,"published":true,"sortOrder":3,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black","time":"21:00 h","eventDateTime":"2026-09-26T21:00:00-03:00","address":"25 de Mayo 1351, San Miguel de Tucumán, Tucumán","mapLat":-26.81278,"mapLng":-65.19917,"mapUrl":"https://www.google.com/maps/search/?api=1&query=Estadio+Monumental+Jos%C3%A9+Fierro%2C+25+de+Mayo+1351%2C+San+Miguel+de+Tucum%C3%A1n","transport":"Accesos por el entorno del estadio y transporte público de la ciudad."},{"title":"Jesse & Joy","image":"assets/events/Jeese_&_Joy.jpg","video":"assets/videos/Jesse_&_Joy.mp4","category":"musica","categoryLabel":"Música","shortMeta":"07/11/2026 • Tucumán","date":"Sábado 7 de noviembre de 2026","city":"San Miguel de Tucumán","venue":"Palacio de los Deportes","description":"Jesse & Joy llegan a Tucumán en el marco de su LATAM Tour 2026, con una noche para disfrutar todos sus clásicos y nuevas canciones.","benefit":"Entradas disponibles online a través de Entrada Uno.","purchaseUrl":"https://entradauno.com/landing/jesse-y-joy-tucuman?idEspectaculoCartel=16500&cHashValidacion=2a41b179f71c126c68e93a325790717239e05f3c","id":"show-4","featured":false,"published":true,"sortOrder":4,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black","time":"21:00 h","eventDateTime":"2026-11-07T21:00:00-03:00","address":"Palacio de los Deportes, San Miguel de Tucumán, Tucumán","mapLat":-26.8317,"mapLng":-65.1812,"mapUrl":"https://www.google.com/maps/place/palacio+de+los+deportes+tucuman/data=!4m2!3m1!1s0x94225eae50a6d3b3:0x3270e62bbbd3d647?sa=X&ved=1t:242&ictx=111","transport":"Acceso por transporte público en la zona del Parque 9 de Julio."},{"title":"Los Fundamentalistas","image":"assets/events/Fundamentalistas.jpg","video":"assets/videos/Fundamentalistas.mp4","category":"musica","categoryLabel":"Música","shortMeta":"10/10/2026 • Tucumán","date":"Sábado 10 de octubre de 2026","city":"San Miguel de Tucumán","venue":"Hipódromo de Tucumán","description":"Los Fundamentalistas del Aire Acondicionado llegan a Tucumán para un show el sábado 10 de octubre.\n\nImportante: prohibido el ingreso a menores de 7 años.","benefit":"Entradas disponibles online a través de TuEntrada.","purchaseUrl":"https://comprar.tuentrada.com/tuentrada/select/2852856","id":"show-5","featured":false,"published":true,"sortOrder":5,"emoji":"","titleColor":"#111111","titleFont":"Archivo Black","time":"20:30 h","eventDateTime":"2026-10-10T20:30:00-03:00","address":"Av. Irineo Leguizamo 600–800, San Miguel de Tucumán, Tucumán","mapLat":-26.82891,"mapLng":-65.18393,"mapUrl":"https://www.google.com/maps/search/?api=1&query=Hip%C3%B3dromo+de+Tucum%C3%A1n%2C+Av.+Irineo+Leguizamo%2C+San+Miguel+de+Tucum%C3%A1n","transport":"Consultar accesos y transporte antes del evento."}];
 const SEED_SITE = {"pageTitle": "Sucrédito · Shows", "navShows": "Shows", "navBenefits": "Beneficios", "navContact": "Contacto", "heroKicker": "Sucrédito presenta", "heroTitle": "VIVÍ LOS SHOWS QUE QUERÉS.", "heroText": "Encontrá tus artistas favoritos, descubrí próximos shows y disfrutá experiencias con Sucrédito.", "searchPlaceholder": "¿Qué show estás buscando?", "searchButton": "BUSCAR", "heroVideo": "assets/videos/Sin_Banderas.mp4", "heroPoster": "assets/events/Sin_Banderas.jpg", "showsEyebrow": "Elegí tu próximo plan", "showsTitle": "Shows destacados", "showsSubtitle": "Descubrí eventos, artistas y experiencias para vivir con Sucrédito.", "allFilter": "Todos", "musicFilter": "Música", "specialFilter": "Especiales", "sportsFilter": "Deportes", "otherFilter": "Otros", "benefitEyebrow": "Con Sucrédito", "benefitTitle": "Más shows. Más momentos.", "benefitText": "Descubrí propuestas y beneficios pensados para que disfrutes tus experiencias.", "benefit1Title": "🎟️ Shows", "benefit1Text": "Encontrá eventos y propuestas destacadas.", "benefit2Title": "💛 Beneficios", "benefit2Text": "Conocé las opciones disponibles con Sucrédito.", "benefit3Title": "📲 Fácil", "benefit3Text": "Desde tu celu, descubrí tu próximo show.", "footerText": "© Sucrédito · Shows y experiencias", "contactText":"Encontrá información y novedades de nuestros shows y experiencias.", "footerInstagram": "", "footerFacebook": "", "footerWeb": "", "heroTitleColor": "#FFFFFF", "heroTitleFont": "Archivo Black", "heroTextColor": "#D6D6D6", "heroTextFont": "Inter", "showsTitleColor": "#111111", "showsTitleFont": "Archivo Black", "benefitTitleColor": "#111111", "benefitTitleFont": "Archivo Black", "benefitTextColor": "#333333", "benefitTextFont": "Inter", "accentColor": "#FFEE00", "backgroundColor": "#FFFDF6"};
 
 function readDraft(key, fallback){
