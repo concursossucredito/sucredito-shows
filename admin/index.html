@@ -164,6 +164,9 @@ textarea{min-height:105px;resize:vertical}
 @media(max-width:760px){.show-summary{grid-template-columns:52px 1fr}.show-summary .show-status{grid-column:2;justify-content:flex-start}.show-summary img{width:44px;height:55px}}
 .preview-modal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;padding:12px;display:none}
 .preview-modal.open{display:flex;align-items:center;justify-content:center}.preview-window{width:min(1280px,100%);height:min(94vh,900px);background:#111;border-radius:20px;overflow:hidden;display:flex;flex-direction:column}.preview-window-head{background:var(--yellow);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:900}.preview-window iframe{width:100%;height:100%;border:0;background:white}
+
+/* V10: controles de estilo */
+.color-field{display:flex;gap:8px;align-items:center}.color-field input[type=color]{width:48px;height:42px;padding:3px}.style-help{font-size:10px;color:#777;line-height:1.45}.emoji-input{font-size:22px}
 </style>
 </head>
 <body>
@@ -231,6 +234,24 @@ textarea{min-height:105px;resize:vertical}
       <details class="accordion"><summary>Beneficios</summary><div class="accordion-body"><div class="site-grid">
         <label>Etiqueta<input id="site_benefitEyebrow"></label><label>Título<input id="site_benefitTitle"></label><label class="full">Texto<textarea id="site_benefitText"></textarea></label><label>Beneficio 1<input id="site_benefit1Title"></label><label>Texto 1<input id="site_benefit1Text"></label><label>Beneficio 2<input id="site_benefit2Title"></label><label>Texto 2<input id="site_benefit2Text"></label><label>Beneficio 3<input id="site_benefit3Title"></label><label>Texto 3<input id="site_benefit3Text"></label>
       </div></div></details>
+      <details class="accordion"><summary>🎨 Colores y tipografías</summary><div class="accordion-body">
+        <p class="section-note">Elegí color y tipografía para los textos principales. Los emojis se pueden escribir directamente en cualquier campo.</p>
+        <div class="site-grid">
+          <label>Color título Hero<div class="color-field"><input id="site_heroTitleColor" type="color" value="#111111"><input id="site_heroTitleColorText" placeholder="#111111"></div></label>
+          <label>Tipografía título Hero<select id="site_heroTitleFont"><option>Archivo Black</option><option>Inter</option><option>Georgia</option><option>Arial</option><option>Trebuchet MS</option></select></label>
+          <label>Color texto Hero<div class="color-field"><input id="site_heroTextColor" type="color" value="#333333"><input id="site_heroTextColorText" placeholder="#333333"></div></label>
+          <label>Tipografía texto Hero<select id="site_heroTextFont"><option>Inter</option><option>Archivo Black</option><option>Georgia</option><option>Arial</option><option>Trebuchet MS</option></select></label>
+          <label>Color título Shows<div class="color-field"><input id="site_showsTitleColor" type="color" value="#111111"><input id="site_showsTitleColorText" placeholder="#111111"></div></label>
+          <label>Tipografía título Shows<select id="site_showsTitleFont"><option>Archivo Black</option><option>Inter</option><option>Georgia</option><option>Arial</option><option>Trebuchet MS</option></select></label>
+          <label>Color título Beneficios<div class="color-field"><input id="site_benefitTitleColor" type="color" value="#111111"><input id="site_benefitTitleColorText" placeholder="#111111"></div></label>
+          <label>Tipografía título Beneficios<select id="site_benefitTitleFont"><option>Archivo Black</option><option>Inter</option><option>Georgia</option><option>Arial</option><option>Trebuchet MS</option></select></label>
+          <label>Color texto Beneficios<div class="color-field"><input id="site_benefitTextColor" type="color" value="#333333"><input id="site_benefitTextColorText" placeholder="#333333"></div></label>
+          <label>Tipografía texto Beneficios<select id="site_benefitTextFont"><option>Inter</option><option>Archivo Black</option><option>Georgia</option><option>Arial</option><option>Trebuchet MS</option></select></label>
+          <label>Color acento general<div class="color-field"><input id="site_accentColor" type="color" value="#FFEE00"><input id="site_accentColorText" placeholder="#FFEE00"></div></label>
+          <label>Color de fondo<div class="color-field"><input id="site_backgroundColor" type="color" value="#FFFDF6"><input id="site_backgroundColorText" placeholder="#FFFDF6"></div></label>
+        </div>
+      </div></details>
+      <details class="accordion"><summary>Contacto</summary><div class="accordion-body"><div class="site-grid"><label class="full">Texto de contacto<textarea id="site_contactText"></textarea></label></div></div></details>
       <details class="accordion"><summary>Pie de página</summary><div class="accordion-body"><div class="site-grid"><label class="full">Texto del pie<input id="site_footerText"></label></div></div></details>
       <div class="site-save"><span id="siteStatus">Sin cambios.</span><button class="btn primary" id="saveSiteBtn">GUARDAR BORRADOR</button></div>
     </div>
@@ -238,9 +259,10 @@ textarea{min-height:105px;resize:vertical}
 </section>
 
 <div class="preview-toolbar">
+  <button class="btn" id="saveAllDraftBtn">💾 GUARDAR BORRADOR</button>
   <button class="btn primary" id="previewBtn">👁 VISTA PREVIA</button>
   <button class="btn dark" id="finalSaveBtn">✓ GUARDAR FINALIZADO</button>
-  <span class="preview-note">Borrador = guardado local. Finalizado = descarga los JSON listos para subir a GitHub.</span>
+  <span class="preview-note">Borrador = guardado local. Vista previa = muestra lo que acabás de editar. Finalizado = descarga los JSON listos para GitHub.</span>
 </div>
 
 <div class="toolbar">
@@ -278,6 +300,19 @@ textarea{min-height:105px;resize:vertical}
 
       <label>Nombre del show
         <input id="title" required placeholder="Ej.: Sin Bandera">
+      </label>
+
+      <label>Emoji / ícono del show
+        <input id="emoji" class="emoji-input" placeholder="Ej.: 🎤 🎸 🎟️">
+        <span class="hint">Es opcional. Se mostrará delante del nombre del show.</span>
+      </label>
+
+      <label>Color del título
+        <input id="titleColor" type="color" value="#111111">
+      </label>
+
+      <label>Tipografía del título
+        <select id="titleFont"><option>Archivo Black</option><option>Inter</option><option>Georgia</option><option>Arial</option><option>Trebuchet MS</option></select>
       </label>
 
       <label>Categoría
@@ -396,7 +431,7 @@ document.getElementById('logoutBtn').addEventListener('click',()=>{
 });
 if(sessionStorage.getItem(SESSION_KEY)==='1') showApp();
 
-const STORAGE_KEY = 'sucredito_shows_admin_v1';
+const STORAGE_KEY = 'sucredito_shows_admin_v10';
 const tbody = document.getElementById('tbody');
 const empty = document.getElementById('empty');
 const statusEl = document.getElementById('status');
@@ -603,64 +638,82 @@ $('videoFile').addEventListener('change',e=>{
   $('videoPreview').src=URL.createObjectURL(file);
 });
 
-const SITE_STORAGE_KEY='sucredito_site_draft_v7';
-const siteFields=['pageTitle','navShows','navBenefits','navContact','heroKicker','heroTitle','heroText','searchPlaceholder','searchButton','heroVideo','heroPoster','showsEyebrow','showsTitle','showsSubtitle','allFilter','musicFilter','specialFilter','sportsFilter','otherFilter','benefitEyebrow','benefitTitle','benefitText','benefit1Title','benefit1Text','benefit2Title','benefit2Text','benefit3Title','benefit3Text','footerText'];
+const SITE_STORAGE_KEY='sucredito_site_draft_v10';
+const siteFields=['pageTitle','navShows','navBenefits','navContact','heroKicker','heroTitle','heroText','searchPlaceholder','searchButton','heroVideo','heroPoster','showsEyebrow','showsTitle','showsSubtitle','allFilter','musicFilter','specialFilter','sportsFilter','otherFilter','benefitEyebrow','benefitTitle','benefitText','benefit1Title','benefit1Text','benefit2Title','benefit2Text','benefit3Title','benefit3Text','footerText','contactText','heroTitleColor','heroTitleFont','heroTextColor','heroTextFont','showsTitleColor','showsTitleFont','benefitTitleColor','benefitTitleFont','benefitTextColor','benefitTextFont','accentColor','backgroundColor'];
+const SITE_DEFAULTS={"pageTitle": "Sucrédito · Shows", "navShows": "Shows", "navBenefits": "Beneficios", "navContact": "Contacto", "heroKicker": "Sucrédito presenta", "heroTitle": "VIVÍ LOS SHOWS QUE QUERÉS.", "heroText": "Encontrá tus artistas favoritos, descubrí próximos shows y disfrutá experiencias con Sucrédito.", "searchPlaceholder": "¿Qué show estás buscando?", "searchButton": "BUSCAR", "heroVideo": "assets/videos/Sin_Banderas.mp4", "heroPoster": "assets/events/Sin_Banderas.jpg", "showsEyebrow": "Elegí tu próximo plan", "showsTitle": "Shows destacados", "showsSubtitle": "Descubrí eventos, artistas y experiencias para vivir con Sucrédito.", "allFilter": "Todos", "musicFilter": "Música", "specialFilter": "Especiales", "sportsFilter": "Deportes", "otherFilter": "Otros", "benefitEyebrow": "Con Sucrédito", "benefitTitle": "Más shows. Más momentos.", "benefitText": "Descubrí propuestas y beneficios pensados para que disfrutes tus experiencias.", "benefit1Title": "🎟️ Shows", "benefit1Text": "Encontrá eventos y propuestas destacadas.", "benefit2Title": "💛 Beneficios", "benefit2Text": "Conocé las opciones disponibles con Sucrédito.", "benefit3Title": "📲 Fácil", "benefit3Text": "Desde tu celu, descubrí tu próximo show.", "footerText": "© Sucrédito · Shows y experiencias", "contactText": "Encontrá información y novedades de nuestros shows y experiencias.", "footerInstagram": "", "footerFacebook": "", "footerWeb": "", "heroTitleColor": "#111111", "heroTitleFont": "Archivo Black", "heroTextColor": "#333333", "heroTextFont": "Inter", "showsTitleColor": "#111111", "showsTitleFont": "Archivo Black", "benefitTitleColor": "#111111", "benefitTitleFont": "Archivo Black", "benefitTextColor": "#333333", "benefitTextFont": "Inter", "accentColor": "#FFEE00", "backgroundColor": "#FFFDF6"};
+const SHOW_DEFAULTS=[{"title": "Sin Bandera", "image": "assets/events/Sin_Banderas.jpg", "video": "assets/videos/Sin_Banderas.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Viví el show de Sin Bandera y disfrutá una experiencia especial con Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-1", "featured": true, "published": true, "sortOrder": 1, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "La Mona Jiménez", "image": "assets/events/Mona.jpg", "video": "assets/videos/Mona_Jimenez.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "La Mona Jiménez llega con toda su energía. Descubrí la propuesta de Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-2", "featured": true, "published": true, "sortOrder": 2, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Despedida de La Pulga Rodríguez", "image": "assets/events/Despedida_Pulga.jpg", "video": "assets/videos/Despedida_Pulga.mp4", "category": "especial", "categoryLabel": "Especial", "shortMeta": "Evento especial • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Una despedida para vivirla en grande. Conocé todos los detalles cuando sean publicados.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-3", "featured": false, "published": true, "sortOrder": 3, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Jesse & Joy", "image": "assets/events/Jeese_&_Joy.jpg", "video": "assets/videos/Jesse_&_Joy.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "Show • Sucrédito", "date": "Próximamente", "city": "Próximamente", "venue": "Próximamente", "description": "Jesse & Joy en una experiencia para disfrutar con Sucrédito.", "benefit": "Beneficios Sucrédito disponibles próximamente.", "purchaseUrl": "", "id": "show-4", "featured": false, "published": true, "sortOrder": 4, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}, {"title": "Los Fundamentalistas", "image": "assets/events/Fundamentalistas.jpg", "video": "assets/videos/Fundamentalistas.mp4", "category": "musica", "categoryLabel": "Música", "shortMeta": "10/10/2026 • Tucumán", "date": "10 de octubre de 2026", "city": "Tucumán", "venue": "Hipódromo de Tucumán", "description": "Los Fundamentalistas del Aire Acondicionado. Consultá la información del show y las opciones disponibles con Sucrédito.", "benefit": "Consultá condiciones y beneficios vigentes de Sucrédito.", "purchaseUrl": "", "id": "show-5", "featured": false, "published": true, "sortOrder": 5, "emoji": "", "titleColor": "#111111", "titleFont": "Archivo Black"}];
 let siteData={};
-function setSiteForm(data){siteData={...data}; siteFields.forEach(k=>{const el=document.getElementById('site_'+k); if(el) el.value=data[k]??'';});}
-function collectSite(){const out={}; siteFields.forEach(k=>{const el=document.getElementById('site_'+k); if(el) out[k]=el.value;}); return out;}
-function saveSiteDraft(){siteData=collectSite();localStorage.setItem(SITE_STORAGE_KEY,JSON.stringify(siteData));document.getElementById('siteStatus').textContent='Contenido guardado en este navegador.';}
-async function loadSite(){const saved=localStorage.getItem(SITE_STORAGE_KEY); if(saved){try{setSiteForm(JSON.parse(saved));return;}catch(e){}} try{const r=await fetch('../data/site.json?ts='+Date.now(),{cache:'no-store'});setSiteForm(await r.json());}catch(e){setSiteForm({});}}
+
+function setColorPair(key,value){
+  const c=document.getElementById('site_'+key), t=document.getElementById('site_'+key+'Text');
+  if(c && /^#[0-9a-f]{6}$/i.test(value||'')) c.value=value;
+  if(t) t.value=value||'';
+}
+function wireColorPair(key){
+  const c=document.getElementById('site_'+key), t=document.getElementById('site_'+key+'Text');
+  if(!c||!t)return;
+  c.addEventListener('input',()=>{t.value=c.value;});
+  t.addEventListener('input',()=>{if(/^#[0-9a-f]{6}$/i.test(t.value.trim()))c.value=t.value.trim();});
+}
+['heroTitleColor','heroTextColor','showsTitleColor','benefitTitleColor','benefitTextColor','accentColor','backgroundColor'].forEach(wireColorPair);
+
+function setSiteForm(data){
+  siteData={...SITE_DEFAULTS,...data};
+  siteFields.forEach(k=>{const el=document.getElementById('site_'+k); if(el) el.value=siteData[k]??'';});
+  ['heroTitleColor','heroTextColor','showsTitleColor','benefitTitleColor','benefitTextColor','accentColor','backgroundColor'].forEach(k=>setColorPair(k,siteData[k]));
+}
+function collectSite(){
+  const out={}; siteFields.forEach(k=>{const el=document.getElementById('site_'+k); if(el) out[k]=el.value;});
+  ['heroTitleColor','heroTextColor','showsTitleColor','benefitTitleColor','benefitTextColor','accentColor','backgroundColor'].forEach(k=>{
+    const t=document.getElementById('site_'+k+'Text'); if(t&&/^#[0-9a-f]{6}$/i.test(t.value.trim())) out[k]=t.value.trim();
+  });
+  return out;
+}
+function saveSiteDraft(){siteData=collectSite();localStorage.setItem(SITE_STORAGE_KEY,JSON.stringify(siteData));document.getElementById('siteStatus').textContent='Página guardada como borrador en este navegador.';}
+async function loadSite(){
+  const saved=localStorage.getItem(SITE_STORAGE_KEY);
+  if(saved){try{setSiteForm(JSON.parse(saved));return;}catch(e){}}
+  try{const r=await fetch('../data/site.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;setSiteForm(await r.json());}
+  catch(e){setSiteForm(SITE_DEFAULTS);}
+}
+
 document.getElementById('saveSiteBtn').onclick=saveSiteDraft;
-document.getElementById('exportSiteBtn').onclick=()=>{const data=collectSite();const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='site.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);document.getElementById('siteStatus').textContent='site.json exportado.';};
+document.getElementById('exportSiteBtn').onclick=()=>{const data=collectSite();downloadJson('site.json',data);document.getElementById('siteStatus').textContent='site.json exportado.';};
 document.getElementById('importSiteBtn').onclick=()=>document.getElementById('siteJsonFile').click();
 document.getElementById('siteJsonFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{setSiteForm(JSON.parse(rd.result));saveSiteDraft();alert('site.json importado correctamente.');}catch(err){alert('No se pudo importar: '+err.message)}e.target.value='';};rd.readAsText(f);});
 loadSite();
 
-function saveShowsDraft(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(shows)); statusEl.textContent='Shows guardados como borrador en este navegador.'; }
-function downloadJson(filename,data){ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=filename; a.click(); setTimeout(()=>URL.revokeObjectURL(u),1000); }
-function preparePreview(){
-  // Guarda exactamente el estado actual antes de abrir la vista previa.
-  saveShowsDraft();
-  saveSiteDraft();
-  localStorage.setItem('sucredito_preview_mode','1');
-}
+function saveShowsDraft(){localStorage.setItem(STORAGE_KEY,JSON.stringify(shows));statusEl.textContent='Shows guardados como borrador en este navegador.';}
+function downloadJson(filename,data){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);}
+function preparePreview(){saveShowsDraft();saveSiteDraft();}
+$('saveAllDraftBtn').onclick=()=>{saveShowsDraft();saveSiteDraft();alert('Borrador guardado en este navegador. Ahora podés abrir Vista Previa.');};
 $('previewBtn').onclick=()=>{
   preparePreview();
-  $('previewModal').classList.add('open');
-  document.body.style.overflow='hidden';
-  $('previewFrame').src='about:blank';
-  setTimeout(()=>{ $('previewFrame').src='../index.html?preview=1&ts='+Date.now(); },30);
+  $('previewModal').classList.add('open'); document.body.style.overflow='hidden';
+  const url='../index.html?preview=1&ts='+Date.now();
+  $('previewFrame').src=url;
 };
-$('previewClose').onclick=()=>{
-  $('previewModal').classList.remove('open');
-  $('previewFrame').src='about:blank';
-  document.body.style.overflow='';
+function closePreview(){ $('previewModal').classList.remove('open'); $('previewFrame').src='about:blank'; document.body.style.overflow=''; }
+$('previewClose').onclick=closePreview;
+$('previewModal').addEventListener('click',e=>{if(e.target===$('previewModal'))closePreview()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('previewModal').classList.contains('open'))closePreview();});
+$('finalSaveBtn').onclick=()=>{saveShowsDraft();saveSiteDraft();downloadJson('shows.json',shows);downloadJson('site.json',collectSite());alert('Listo. Se descargaron shows.json y site.json. Reemplazalos en la carpeta data de GitHub y hacé COMMIT para publicar los cambios.');};
+
+// Show fields: keep current data and add styling controls.
+const originalFillForm=fillForm;
+fillForm=function(show={}){
+  originalFillForm(show);
+  $('emoji').value=show.emoji||'';
+  $('titleColor').value=show.titleColor||'#111111';
+  $('titleFont').value=show.titleFont||'Archivo Black';
 };
-$('previewModal').addEventListener('click',e=>{if(e.target===$('previewModal')) $('previewClose').click()});
-$('finalSaveBtn').onclick=()=>{
-  saveShowsDraft();
-  saveSiteDraft();
-  downloadJson('shows.json',shows);
-  downloadJson('site.json',collectSite());
-  alert('Listo. Se descargaron shows.json y site.json. Reemplazalos en la carpeta data de GitHub y hacé COMMIT para publicar los cambios.');
-};
+const originalCollect=collect;
+collect=function(){const s=originalCollect();s.emoji=$('emoji').value.trim();s.titleColor=$('titleColor').value;s.titleFont=$('titleFont').value;return s;};
 
 async function init(){
   const saved=localStorage.getItem(STORAGE_KEY);
-  if(saved){
-    try{
-      shows=JSON.parse(saved);
-      render();
-      return;
-    }catch(e){}
-  }
-  try{
-    const r=await fetch('../data/shows.json?ts='+Date.now(),{cache:'no-store'});
-    if(!r.ok)throw new Error();
-    shows=await r.json();
-  }catch(e){
-    shows=defaultShows();
-  }
+  if(saved){try{shows=JSON.parse(saved);render();return;}catch(e){}}
+  try{const r=await fetch('../data/shows.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const data=await r.json();shows=Array.isArray(data)?data:SHOW_DEFAULTS;}catch(e){shows=SHOW_DEFAULTS.map(x=>({...x}));}
   render();
 }
 init();
