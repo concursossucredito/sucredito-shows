@@ -23,6 +23,58 @@
   --radius:24px;
   --shadow:0 18px 45px rgba(0,0,0,.10);
 }
+
+/* ——— INTRO ANIMADO DE SUCRÉDITO ——— */
+.intro-screen{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:var(--yellow);
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition:opacity .22s ease, visibility .22s ease;
+}
+.intro-screen.is-hidden{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.intro-logo{
+  position:fixed;
+  left:50%;
+  top:50%;
+  width:min(300px,64vw);
+  height:auto;
+  display:block;
+  transform:translate(-50%,-50%) rotate(0deg) scale(1);
+  transform-origin:center center;
+  transition:
+    left .78s cubic-bezier(.22,1,.36,1),
+    top .78s cubic-bezier(.22,1,.36,1),
+    width .78s cubic-bezier(.22,1,.36,1),
+    transform .78s cubic-bezier(.22,1,.36,1);
+  will-change:left,top,width,transform;
+  filter:drop-shadow(0 16px 30px rgba(0,0,0,.14));
+}
+body.intro-active{overflow:hidden}
+body.intro-active .header .logo-wrap{opacity:0}
+body.intro-active .hero-copy > *{opacity:0;transform:translateY(18px)}
+body.intro-done .header .logo-wrap{opacity:1;transition:opacity .18s ease}
+body.intro-done .hero-copy > *{
+  opacity:1;
+  transform:translateY(0);
+  transition:opacity .42s ease, transform .42s var(--ease);
+}
+body.intro-done .hero-copy > *:nth-child(1){transition-delay:.04s}
+body.intro-done .hero-copy > *:nth-child(2){transition-delay:.10s}
+body.intro-done .hero-copy > *:nth-child(3){transition-delay:.16s}
+body.intro-done .hero-copy > *:nth-child(4){transition-delay:.22s}
+
+@media (prefers-reduced-motion:reduce){
+  .intro-logo{transition:none}
+}
+
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
@@ -229,17 +281,26 @@ h1,h2,h3{margin:0}
   grid-template-columns:repeat(3,1fr);
   gap:20px;
 }
+/* Aparición progresiva al bajar por la agenda */
 .card{
   background:white;
   border:1px solid var(--line);
   border-radius:var(--radius);
   overflow:hidden;
   box-shadow:0 8px 25px rgba(0,0,0,.04);
-  transition:transform .25s ease,box-shadow .25s ease;
+  transition:transform .42s var(--ease),box-shadow .25s ease,opacity .55s var(--ease),filter .55s var(--ease);
   cursor:pointer;
   display:flex;
   flex-direction:column;
   height:100%;
+  opacity:0;
+  transform:translateY(34px) scale(.985);
+  filter:blur(2px);
+}
+.card.is-visible{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  filter:blur(0);
 }
 .card:hover{
   transform:translateY(-5px);
@@ -300,6 +361,54 @@ h1,h2,h3{margin:0}
   color:#777;
   font-size:13px;
   line-height:1.5;
+}
+
+.card-event-date{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin:13px 0 2px;
+  min-height:34px;
+}
+.card-event-date-box{
+  width:38px;
+  height:38px;
+  flex:none;
+  border-radius:11px;
+  background:#111;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+  box-shadow:0 6px 14px rgba(0,0,0,.10);
+}
+.card-event-date-day{
+  font-family:"Archivo Black",Impact,sans-serif;
+  font-size:15px;
+  letter-spacing:-.02em;
+}
+.card-event-date-month{
+  margin-top:3px;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  color:#cfcfcf;
+}
+.card-event-date-copy{
+  font-size:12px;
+  font-weight:800;
+  color:#4f4f4f;
+  line-height:1.25;
+}
+.card-event-date-copy small{
+  display:block;
+  margin-top:2px;
+  color:#8a8a8a;
+  font-size:10px;
+  font-weight:600;
 }
 .card-cta{
   display:flex;
@@ -711,6 +820,7 @@ h1,h2,h3{margin:0}
   .benefits{grid-template-columns:1fr}
 }
 @media (max-width:650px){
+  .intro-logo{width:min(240px,72vw)}
   .header-inner{min-height:68px;padding:10px 14px}
   .logo{width:112px}
   .nav{display:none}
@@ -747,6 +857,15 @@ h1,h2,h3{margin:0}
   .modal-countdown-num{font-size:25px}
   .modal-countdown-block{min-width:37px}
   .modal-countdown-colon{padding-bottom:11px}
+}
+
+@media (max-width:650px){
+  .card-event-date{margin:10px 0 0;gap:8px}
+  .card-event-date-box{width:34px;height:34px;border-radius:10px}
+  .card-event-date-day{font-size:14px}
+  .card-event-date-month{font-size:7px}
+  .card-event-date-copy{font-size:10px}
+  .card-event-date-copy small{font-size:9px}
 }
 
 @media (hover:none){
@@ -790,7 +909,11 @@ h1,h2,h3{margin:0}
 </style>
 </head>
 
-<body>
+<body class="intro-active">
+
+<div class="intro-screen" id="introScreen" aria-hidden="true">
+  <img class="intro-logo" id="introLogo" src="assets/logo.png" alt="">
+</div>
 
 <header class="header">
   <div class="header-inner">
@@ -1029,6 +1152,52 @@ function escapeHtml(value=''){
     .replaceAll("'","&#039;");
 }
 
+function parseEventDate(show){
+  if (!show || !show.eventDateTime) return null;
+  const d = new Date(show.eventDateTime);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+const MONTH_LABELS = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+const WEEKDAY_LABELS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+function eventDateMarkup(show){
+  const d = parseEventDate(show);
+  if (!d) {
+    return '<div class="card-event-date"><div class="card-event-date-box"><span class="card-event-date-day">—</span><span class="card-event-date-month">FECHA</span></div><div class="card-event-date-copy">Próximamente</div></div>';
+  }
+  const day = String(d.getDate()).padStart(2,'0');
+  const month = MONTH_LABELS[d.getMonth()];
+  const weekday = WEEKDAY_LABELS[d.getDay()];
+  const dateText = show.date || `${weekday} ${day} de ${month.toLowerCase()}`;
+  const timeText = show.time || '';
+  return `<div class="card-event-date">
+    <div class="card-event-date-box"><span class="card-event-date-day">${day}</span><span class="card-event-date-month">${month}</span></div>
+    <div class="card-event-date-copy">${escapeHtml(dateText)}${timeText ? `<small>${escapeHtml(timeText)}</small>` : ''}</div>
+  </div>`;
+}
+
+let showRevealObserver = null;
+function observeShowCards(){
+  if (showRevealObserver) showRevealObserver.disconnect();
+  const cards = [...grid.querySelectorAll('.card')];
+  if (!('IntersectionObserver' in window)) {
+    cards.forEach(card => card.classList.add('is-visible'));
+    return;
+  }
+  showRevealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const card = entry.target;
+      const cardsNow = [...grid.querySelectorAll('.card')];
+      const index = Math.max(0, cardsNow.indexOf(card));
+      setTimeout(() => card.classList.add('is-visible'), (index % 3) * 90);
+      showRevealObserver.unobserve(card);
+    });
+  }, {threshold:0.16, rootMargin:'0px 0px -50px 0px'});
+  cards.forEach(card => showRevealObserver.observe(card));
+}
+
 function renderShows(){
   grid.innerHTML = '';
 
@@ -1054,6 +1223,7 @@ function renderShows(){
       <div class="card-body">
         <div class="card-title" style="color:${escapeHtml(show.titleColor||'#111111')};font-family:${escapeHtml(show.titleFont||'Archivo Black')},Inter,Arial,sans-serif">${escapeHtml(show.emoji ? show.emoji+' ' : "")}${escapeHtml(show.title)}</div>
         <div class="card-meta">${escapeHtml(show.shortMeta || 'Show • Sucrédito')}</div>
+        ${eventDateMarkup(show)}
         <div class="card-cta">
           <span>Ver detalles</span>
           <span class="arrow" aria-hidden="true"><svg viewBox="0 0 28 24" role="presentation" focusable="false"><path d="M2 2L12 12L2 22"/><path d="M14 2L24 12L14 22"/></svg></span>
@@ -1084,6 +1254,7 @@ function renderShows(){
   });
 
   applyFilters();
+  requestAnimationFrame(observeShowCards);
 }
 
 function startPreview(card, show, video){
@@ -1402,6 +1573,63 @@ window.addEventListener('message',event=>{
   if(data.site)applySite(data.site);
 });
 
+/* ——— INTRO ANIMADO DE SUCRÉDITO ——— */
+(function runBrandIntro(){
+  const screen=document.getElementById('introScreen');
+  const introLogo=document.getElementById('introLogo');
+  const headerLogo=document.querySelector('.header .logo');
+  if(!screen||!introLogo||!headerLogo)return;
+
+  const isPreview=new URLSearchParams(location.search).get('preview')==='1';
+
+  const finishImmediately=()=>{
+    screen.classList.add('is-hidden');
+    document.body.classList.remove('intro-active');
+    document.body.classList.add('intro-done');
+    document.body.style.overflow='';
+  };
+
+  if(isPreview){
+    finishImmediately();
+    return;
+  }
+
+  const start=()=>{
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      setTimeout(finishImmediately,220);
+      return;
+    }
+
+    const rect=headerLogo.getBoundingClientRect();
+    const targetWidth=Math.max(84,Math.round(rect.width));
+    const targetLeft=Math.round(rect.left+rect.width/2);
+    const targetTop=Math.round(rect.top+rect.height/2);
+
+    setTimeout(()=>{
+      introLogo.style.left=targetLeft+'px';
+      introLogo.style.top=targetTop+'px';
+      introLogo.style.width=targetWidth+'px';
+      introLogo.style.transform='translate(-50%,-50%) rotate(360deg) scale(.96)';
+    },380);
+
+    setTimeout(()=>{
+      document.body.classList.remove('intro-active');
+      document.body.classList.add('intro-done');
+      screen.classList.add('is-hidden');
+      document.body.style.overflow='';
+    },1180);
+  };
+
+  /* No esperamos a que carguen videos u otros recursos pesados.
+     La intro debe arrancar enseguida. */
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(start, 80);
+    }, {once:true});
+  }else{
+    setTimeout(start, 80);
+  }
+})();
 
 </script>
 
