@@ -31,7 +31,7 @@
       <label>Usuario<input id="user" autocomplete="username" required></label>
       <label>Contraseña<input id="pass" type="password" autocomplete="current-password" required></label>
       <button class="login-btn" type="submit">INGRESAR</button>
-      <p class="login-note">Panel de edición. La seguridad avanzada y la publicación automática se incorporan después.</p>
+      <p class="login-note">Acceso protegido. Los cambios se publican solo desde el servidor seguro.</p>
     </form>
   </div>
 </div>
@@ -41,7 +41,9 @@
 <main class="wrap">
   <div class="intro"><div><div class="intro-kicker">Panel simple de actualización</div><h1>Sucrédito Shows</h1><p>Acá cambiás lo que ve el público. Los archivos de imagen y video se siguen subiendo a GitHub; en el Admin solo indicás sus rutas.</p></div><div class="state"><small>Base actual</small><strong id="baseState">Cargando producción…</strong></div></div>
 
-  <div class="toolbar"><button class="btn primary" id="saveDraft">💾 GUARDAR BORRADOR</button><button class="btn dark" id="preview">👁 VISTA PREVIA</button><button class="btn" id="publishFiles">✓ GUARDAR FINALIZADO</button><button class="btn" id="reloadProduction">↻ RECARGAR PRODUCCIÓN</button><span class="status" id="status">Cargando…</span><input id="search" type="search" placeholder="Buscar show…"></div>
+  <div class="helper" style="margin-bottom:10px"><strong>🔐 Seguridad:</strong> el Admin ya no guarda usuario, contraseña ni token de GitHub en este archivo. La publicación pasa por un servidor seguro.</div>
+
+  <div class="toolbar"><button class="btn primary" id="saveDraft">💾 GUARDAR BORRADOR</button><button class="btn dark" id="preview">👁 VISTA PREVIA</button><button class="btn red" id="publishFiles">✓ PUBLICAR CAMBIOS</button><button class="btn" id="reloadProduction">↻ RECARGAR PRODUCCIÓN</button><span class="status" id="status">Cargando…</span><input id="search" type="search" placeholder="Buscar show…"></div>
 
   <section class="panel">
     <div class="panel-head"><div><h2>🖥️ Página principal</h2><p>Lo que aparece en la portada. Abrí solo la parte que quieras modificar.</p></div><div class="site-actions"><button class="btn" id="exportSite">EXPORTAR site.json</button></div></div>
@@ -100,8 +102,14 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const USER='admin', PASS='Sucredito2026!';
-const SESSION_KEY='sucredito_admin_session';
+/*
+  Seguridad:
+  - No hay usuario/contraseña ni token de GitHub dentro del HTML.
+  - API_URL debe apuntar al Cloudflare Worker seguro.
+  - La sesión de publicación vive solo en sessionStorage.
+*/
+const API_URL='https://sucredito-admin-api.concursos-sucredito.workers.dev';
+const SESSION_KEY='sucredito_admin_session_v34';
 const SHOW_KEY='sucredito_shows_admin_v10';
 const SITE_KEY='sucredito_site_draft_v10';
 
@@ -144,22 +152,209 @@ function preview(){saveLocal();const m=$('previewModal'),f=$('previewFrame');m.c
 function closePreview(){$('previewModal').classList.remove('open');$('previewFrame').src='about:blank';document.body.style.overflow=''}
 function download(name,data){const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 
-$('loginForm').onsubmit=async e=>{e.preventDefault();if($('user').value.trim()===USER&&$('pass').value===PASS){sessionStorage.setItem(SESSION_KEY,'1');$('login').classList.add('hidden');$('app').classList.remove('hidden');await loadProduction()}else{$('loginError').style.display='block';$('pass').select()}};
-$('logout').onclick=()=>{localStorage.removeItem(SHOW_KEY);localStorage.removeItem(SITE_KEY);sessionStorage.removeItem(SESSION_KEY);location.reload()};
-$('saveDraft').onclick=()=>{site=collectSite();saveLocal();$('siteStatus').textContent='Página y shows guardados como borrador';showToast('Borrador guardado')};
+async function apiFetch(path, options={}) {
+  if (API_URL === 'PASTE_YOUR_WORKER_URL_HERE') {
+    throw new Error('Falta configurar la URL del Worker seguro.');
+  }
+  const headers = new Headers(options.headers || {});
+  headers.set('Content-Type', 'application/json');
+  const token = sessionStorage.getItem(SESSION_KEY);
+  if (token) headers.set('Authorization', 'Bearer ' + token);
+
+  const response = await fetch(API_URL.replace(/\/+$/,'') + path, {
+    ...options,
+    headers
+  });
+
+  let body = null;
+  try { body = await response.json(); } catch(e) {}
+
+  if (!response.ok) {
+    const message = body?.error || `Error ${response.status}`;
+    const err = new Error(message);
+    err.status = response.status;
+    throw err;
+  }
+  return body;
+}
+
+async function validateSession(){
+  try {
+    if(!sessionStorage.getItem(SESSION_KEY)) return false;
+    await apiFetch('/session', {method:'GET'});
+    return true;
+  } catch (e) {
+    sessionStorage.removeItem(SESSION_KEY);
+    return false;
+  }
+}
+
+async function publishToGitHub(){
+  site = collectSite();
+  saveLocal();
+
+  const ok = confirm(
+    'Vas a PUBLICAR estos cambios en el sitio.\n\n' +
+    'Se actualizarán site.json y shows.json en GitHub.\n\n' +
+    '¿Continuar?'
+  );
+  if(!ok) return;
+
+  const button = $('publishFiles');
+  const previous = button.textContent;
+  button.disabled = true;
+  button.textContent = 'PUBLICANDO…';
+  $('status').textContent = 'Enviando cambios a GitHub…';
+
+  try {
+    const result = await apiFetch('/publish', {
+      method:'POST',
+      body:JSON.stringify({
+        message:'Actualización desde Admin Sucrédito Shows',
+        site:clone(site),
+        shows:clone(shows)
+      })
+    });
+
+    localStorage.removeItem(SHOW_KEY);
+    localStorage.removeItem(SITE_KEY);
+
+    $('baseState').textContent = 'Cambios publicados en GitHub';
+    $('status').textContent = result.commitSha
+      ? 'Publicado · commit ' + result.commitSha.slice(0,7)
+      : 'Publicado correctamente';
+
+    $('siteStatus').textContent = 'Producción actualizada.';
+    showToast('✓ Cambios publicados');
+
+  } catch (err) {
+    if (err.status === 401) {
+      sessionStorage.removeItem(SESSION_KEY);
+      $('login').classList.remove('hidden');
+      $('app').classList.add('hidden');
+      $('loginError').textContent = 'La sesión venció. Volvé a ingresar.';
+      $('loginError').style.display = 'block';
+    } else {
+      showToast('No se pudo publicar: ' + err.message);
+      $('status').textContent = 'Error al publicar';
+    }
+  } finally {
+    button.disabled = false;
+    button.textContent = previous;
+  }
+}
+
+$('loginForm').onsubmit=async e=>{
+  e.preventDefault();
+
+  const loginError = $('loginError');
+  loginError.style.display='none';
+
+  if (API_URL === 'PASTE_YOUR_WORKER_URL_HERE') {
+    loginError.textContent='Primero hay que configurar la URL del Worker seguro en el Admin.';
+    loginError.style.display='block';
+    return;
+  }
+
+  const btn = e.submitter || document.querySelector('.login-btn');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'VERIFICANDO…';
+
+  try {
+    const result = await fetch(API_URL.replace(/\/+$/,'') + '/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        user:$('user').value.trim(),
+        pass:$('pass').value
+      })
+    });
+
+    let body = null;
+    try { body = await result.json(); } catch(e) {}
+
+    if (!result.ok || !body?.token) {
+      throw new Error(body?.error || 'Usuario o contraseña incorrectos.');
+    }
+
+    sessionStorage.setItem(SESSION_KEY, body.token);
+    $('login').classList.add('hidden');
+    $('app').classList.remove('hidden');
+    await loadProduction();
+
+  } catch (err) {
+    loginError.textContent =
+      err.message === 'Failed to fetch'
+        ? 'No se pudo conectar con el servidor de seguridad.'
+        : err.message;
+
+    loginError.style.display='block';
+    $('pass').select();
+
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+};
+
+$('logout').onclick=()=>{
+  localStorage.removeItem(SHOW_KEY);
+  localStorage.removeItem(SITE_KEY);
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+};
+
+$('saveDraft').onclick=()=>{
+  site=collectSite();
+  saveLocal();
+  $('siteStatus').textContent='Página y shows guardados como borrador';
+  showToast('Borrador guardado');
+};
+
 $('preview').onclick=preview;
 $('closePreview').onclick=closePreview;
-$('previewModal').onclick=e=>{if(e.target===$('previewModal'))closePreview()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('previewModal').classList.contains('open'))closePreview()});
-$('reloadProduction').onclick=async()=>{if(confirm('Esto descarta el borrador y vuelve a cargar lo publicado en GitHub. ¿Continuar?'))await loadProduction()};
-$('saveSite').onclick=()=>{site=collectSite();saveLocal();$('siteStatus').textContent='Página guardada como borrador';showToast('Página guardada')};
+$('previewModal').onclick=e=>{
+  if(e.target===$('previewModal')) closePreview();
+};
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&$('previewModal').classList.contains('open')) {
+    closePreview();
+  }
+});
+
+$('reloadProduction').onclick=async()=>{
+  if(confirm('Esto descarta el borrador y vuelve a cargar lo publicado en GitHub. ¿Continuar?')) {
+    await loadProduction();
+  }
+};
+
+$('saveSite').onclick=()=>{
+  site=collectSite();
+  saveLocal();
+  $('siteStatus').textContent='Página guardada como borrador';
+  showToast('Página guardada');
+};
+
 $('newShow').onclick=openNew;
 $('exportSite').onclick=()=>download('site.json',collectSite());
 $('exportShows').onclick=()=>download('shows.json',shows);
-$('publishFiles').onclick=()=>{site=collectSite();saveLocal();download('shows.json',shows);setTimeout(()=>download('site.json',site),250);showToast('Se descargaron los 2 JSON');};
+$('publishFiles').onclick=publishToGitHub;
 $('search').oninput=renderShows;
 
-if(sessionStorage.getItem(SESSION_KEY)==='1'){$('login').classList.add('hidden');$('app').classList.remove('hidden');loadProduction()}else{localStorage.removeItem(SHOW_KEY);localStorage.removeItem(SITE_KEY)}
+(async()=>{
+  const valid = await validateSession();
+
+  if(valid){
+    $('login').classList.add('hidden');
+    $('app').classList.remove('hidden');
+    await loadProduction();
+  } else {
+    localStorage.removeItem(SHOW_KEY);
+    localStorage.removeItem(SITE_KEY);
+  }
+})();
 </script>
 </body>
 </html>
