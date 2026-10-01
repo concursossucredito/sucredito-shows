@@ -110,5 +110,33 @@
     "mapLng": -65.18393,
     "mapUrl": "https://www.google.com/maps/search/?api=1&query=Hip%C3%B3dromo+de+Tucum%C3%A1n%2C+Av.+Irineo+Leguizamo%2C+San+Miguel+de+Tucum%C3%A1n",
     "transport": "Consultar accesos y transporte antes del evento."
+  },
+  {
+    "id": "show-mupin8r2-pgdy9",
+    "title": "Despedida de Messi",
+    "image": "assets/events/Despedida_Messi.jpeg",
+    "video": "assets/videos/historia_despedida_messi.mp4",
+    "category": "deporte",
+    "categoryLabel": "Deporte",
+    "shortMeta": "EL ULTIMO TANGO",
+    "date": "6-10-2026",
+    "city": "BUENOS AIRES",
+    "venue": "ESTADIO MONUMENTAL",
+    "description": "\"El último de MESSI - VIAJE + ENTRADAS \nEn 8 cuotas sin interés con tu Sucrédito\"",
+    "benefit": "8 cuotas sin interés con tu Sucrédito",
+    "purchaseUrl": "https://api.whatsapp.com/message/6AVKAENCNHWHH1?autoload=1&app_absent=0&utm_source=ig",
+    "published": true,
+    "featured": true,
+    "sortOrder": 2,
+    "emoji": "",
+    "titleColor": "#111111",
+    "titleFont": "Georgia",
+    "time": "",
+    "eventDateTime": "",
+    "address": "",
+    "mapLat": "",
+    "mapLng": "",
+    "mapUrl": "https://www.google.com/maps/place/estadio+monumental+de+river/data=!4m2!3m1!1s0x95bcb43ae6018ddf:0x3d7f60a75bfa308a?sa=X&ved=1t:242&ictx=111",
+    "transport": ""
   }
 ]
