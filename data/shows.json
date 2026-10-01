@@ -134,8 +134,8 @@
     "time": "21:00 h",
     "eventDateTime": "2026-10-05T21:00:00-03:00",
     "address": "",
-    "mapLat": "",
-    "mapLng": "",
+    "mapLat": -34.5453,
+    "mapLng": -58.4497,
     "mapUrl": "https://maps.app.goo.gl/ubCocnBQHbRTDbg69",
     "transport": ""
   }
