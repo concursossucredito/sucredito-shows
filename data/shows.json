@@ -33,8 +33,8 @@
     "video": "",
     "category": "especial",
     "categoryLabel": "Especial",
-    "shortMeta": "23/02/2027 • Tucumán",
-    "date": "Jueves 8 de Octubre de 2026",
+    "shortMeta": "08/10/2026 • Tucumán, Trancas",
+    "date": "Sábado 8 de octubre de 2026",
     "city": "San Miguel de Tucumán, Trancas",
     "venue": "CLUB DEPORTIVO TRANCAS",
     "description": "\"Este finde VIVÍ EL FESTIVAL DEL CABALLO de la mano de tu Sucrédito\nComprá las entradas en 4 cuotas sin interés en nuestras sucursales y disfrutá de 4 días INOLVIDABLES.\n\nEugenia Quevedo, Christian Herrera, Los Tekis ,Q'Lokura, Lázaro Caballero Abel Pintos, Nahuel Pennisi, Márama, el Chaqueño Palavecino, y Karina, entre otros.\nPrepará las ganas de cantar, bailar y disfrutar de una de las fiestas más esperadas de Tucumán.\n\n Viví la Fiesta del Caballo junto a Sucrédito, la Tarjeta de los Espectáculos.\"",
@@ -50,9 +50,9 @@
     "time": "21:00 hs",
     "eventDateTime": "2026-10-8T21:00:00-03:00",
     "address": "",
-    "mapLat": "",
-    "mapLng": "",
-    "mapUrl": "",
+    "mapLat": -26.235409975820396,
+    "mapLng": -65.27906870436176,
+    "mapUrl": "https://maps.app.goo.gl/iPZmWhzvk1Vzo5jj7",
     "transport": "Acceso por transporte público en la zona del Parque 9 de Julio."
   },
   {
